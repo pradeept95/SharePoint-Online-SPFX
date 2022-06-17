@@ -1,0 +1,40 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "share-point-spfx-solution-client-side-solution",
+    "id": "287c85fd-09a9-42cd-bfcd-e313cafa3379",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "developer": {
+      "name": "",
+      "websiteUrl": "",
+      "privacyUrl": "",
+      "termsOfUseUrl": "",
+      "mpnId": "Undefined-1.14.0"
+    },
+    "metadata": {
+      "shortDescription": {
+        "default": "SharePoint SPFX Solution description"
+      },
+      "longDescription": {
+        "default": "SharePoint SPFX Solution description"
+      },
+      "screenshotPaths": [],
+      "videoUrl": "",
+      "categories": []
+    },
+    "features": [
+      {
+        "title": "share-point-spfx-solution Feature",
+        "description": "The feature that activates elements of the share-point-spfx-solution solution.",
+        "id": "eab7fe2d-cc6f-4f43-8e2f-a891801de215",
+        "version": "1.0.0.0"
+      }
+    ]
+  },
+  "paths": {
+    "zippedPackage": "solution/share-point-spfx-solution.sppkg"
+  }
+}
