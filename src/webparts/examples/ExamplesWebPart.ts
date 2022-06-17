@@ -11,7 +11,7 @@ import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import * as strings from 'ExamplesWebPartStrings';
 import Examples from './components/Examples';
 import { IExamplesProps } from './components/IExamplesProps';
-import AppContext from '../../common/services/app-context.service';
+import AppContext from '../../common/config/app-context.config';
 
 export interface IExamplesWebPartProps {
   description: string;

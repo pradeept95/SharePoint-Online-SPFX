@@ -1,5 +1,5 @@
 import { WebPartContext } from "@microsoft/sp-webpart-base";
-import { getSP } from "../config/pnpjs.config";
+import { getSP } from "./pnpjs.config";
 
 class AppContext {
     private static instance: AppContext;

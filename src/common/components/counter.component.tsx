@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { getSP } from '../config/pnpjs.config';
-import AppContext from '../services/app-context.service';
+import AppContext from '../config/app-context.config';
 
 export interface ITestCounterProps {
   count?: number
@@ -10,6 +10,7 @@ export interface ITestCounterProps {
 export const Counter: React.FunctionComponent<ITestCounterProps> = (props) => {
   // Declare a new state variable, which we'll call "count"
   const [count, setCount] = useState(0);
+  const [list, setList] = useState([]);
 
   const context = AppContext.getInstance();
 
@@ -40,9 +41,21 @@ export const Counter: React.FunctionComponent<ITestCounterProps> = (props) => {
     // }
 
     try {
-      const items = await sp.web.lists.getByTitle("MyFirstListSPFX").items();
-      debugger;
-      console.log(items)
+
+      // get all the items from a list
+      const items: any[] = await sp.web.lists.getByTitle("MyFirstListSPFX").items();
+      console.log(items);
+
+      // get a specific item by id.
+      const item: any = await sp.web.lists.getByTitle("MyFirstListSPFX").items.getById(1)();
+      console.log(item);
+
+      // use odata operators for more efficient queries
+      const items2: any[] = await sp.web.lists.getByTitle("MyFirstListSPFX").items.select("Title", "ID").top(5).orderBy("Modified", true)();
+      console.log(items2);
+
+
+      setList(items);
 
     } catch (error) {
       debugger;
@@ -61,6 +74,9 @@ export const Counter: React.FunctionComponent<ITestCounterProps> = (props) => {
       <button onClick={() => callApi()}>
         Call Service
       </button>
+      <ul>
+        {list.map(item => <li key={item?.id}> {item?.Title} </li>)}
+      </ul>  
     </div>
   );
 };
