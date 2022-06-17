@@ -9,6 +9,7 @@
     "test": "gulp test"
   },
   "dependencies": {
+    "@fluentui/react": "^8.76.0",
     "@microsoft/rush-stack-compiler-4.2": "^0.1.2",
     "@microsoft/sp-core-library": "1.14.0",
     "@microsoft/sp-lodash-subset": "1.14.0",
@@ -20,7 +21,8 @@
     "@pnp/sp": "^3.4.1",
     "office-ui-fabric-react": "7.174.1",
     "react": "16.13.1",
-    "react-dom": "16.13.1"
+    "react-dom": "16.13.1",
+    "react-router-dom": "^6.3.0"
   },
   "devDependencies": {
     "@microsoft/sp-build-web": "1.14.0",

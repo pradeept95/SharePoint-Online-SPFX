@@ -38,16 +38,11 @@
     "scriptResources": {
       "examples-web-part": {
         "type": "path",
-        "path": "examples-web-part_8100baa9b5a2ff5d8f74.js"
+        "path": "examples-web-part_5f5cf8e1dcd9e50fe1f4.js"
       },
       "@microsoft/sp-property-pane": {
         "type": "component",
         "id": "f9e737b7-f0df-4597-ba8c-3060f82380db",
-        "version": "1.14.0"
-      },
-      "@microsoft/sp-lodash-subset": {
-        "type": "component",
-        "id": "73e1dc6c-8441-42cc-ad47-4bd3659f8a3a",
         "version": "1.14.0"
       },
       "@microsoft/sp-core-library": {
@@ -57,7 +52,7 @@
       },
       "ExamplesWebPartStrings": {
         "type": "path",
-        "path": "ExamplesWebPartStrings_en-us_ab0373b2a20479e31e6fa297c55f351c.js"
+        "path": "ExamplesWebPartStrings_en-us_e7599a9530f36b7e64dfc6055407c58c.js"
       },
       "@microsoft/sp-webpart-base": {
         "type": "component",

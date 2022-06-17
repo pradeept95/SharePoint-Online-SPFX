@@ -2,6 +2,8 @@ import * as React from 'react';
 import { useState } from 'react';
 import { getSP } from '../config/pnpjs.config';
 import AppContext from '../config/app-context.config';
+import { PrimaryButton } from '@fluentui/react/lib/Button';
+import { IStackTokens, Stack } from 'office-ui-fabric-react';
 
 export interface ITestCounterProps {
   count?: number
@@ -15,6 +17,7 @@ export const Counter: React.FunctionComponent<ITestCounterProps> = (props) => {
   const context = AppContext.getInstance();
 
   const userName = context.context.pageContext.user.displayName;
+ 
 
   const callApi = async (): Promise<void> => {
 
@@ -54,7 +57,9 @@ export const Counter: React.FunctionComponent<ITestCounterProps> = (props) => {
       const items2: any[] = await sp.web.lists.getByTitle("MyFirstListSPFX").items.select("Title", "ID").top(5).orderBy("Modified", true)();
       console.log(items2);
 
+      context.context.pageContext.web.permissions
 
+      const permission = context.context.pageContext.web.permissions;
       setList(items);
 
     } catch (error) {
@@ -64,19 +69,18 @@ export const Counter: React.FunctionComponent<ITestCounterProps> = (props) => {
 
   }
 
+  const stackTokens: IStackTokens = { childrenGap: 40 };
+
   return (
     <div>
-      <p>You clicked {count} times, {userName}</p>
-      <button onClick={() => setCount(count + 1)}>
-        Click me
-      </button>
-
-      <button onClick={() => callApi()}>
-        Call Service
-      </button>
+      <p>You clicked {count} times, {userName}.</p>
+      <Stack horizontal tokens={stackTokens}>
+        <PrimaryButton text="Increase Count" onClick={() => setCount(count + 1)} />
+        <PrimaryButton text="Make API Call" onClick={() => callApi()} />
+      </Stack>
       <ul>
         {list.map(item => <li key={item?.id}> {item?.Title} </li>)}
-      </ul>  
+      </ul>
     </div>
   );
 };

@@ -16,7 +16,7 @@ export const getSP = async (context?: WebPartContext): Promise<SPFI> => {
 
         // Set sp as the global variable so we don't have to pass webpartcontext deep down to the child component
         // initialize once at init 
-        _SP = spfi().using(SPFx(context)).using(PnPLogging(LogLevel.Warning));
+        _SP = spfi().using(SPFx(context)).using(PnPLogging(LogLevel.Error));
     }
 
     return new Promise((resolve, reject) => { 
