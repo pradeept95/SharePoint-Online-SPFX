@@ -1,4 +1,4 @@
-import { Counter } from "./counter.component";
+import { Counter } from "../examples/counter.component";
 
 export {
     Counter

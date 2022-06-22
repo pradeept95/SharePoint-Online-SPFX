@@ -6,12 +6,13 @@ import PageNotFound from "./components/page-not-found/page-not-found.component";
 import AccessDenied from "./components/access-denied/access-denied.component";
 import { CommandBar, IButtonProps, ICommandBarItemProps } from "@fluentui/react";
 import { FormExample } from "./examples/forms/forms.component";
-import { LoadingSpinner } from "./components/spinner/spinner.component";
+import { LoadingSpinner } from "./components/spinner/LoadingSpinner";
 import Layout from "./components/layouts/layout.component";
 import { ROLES } from "./auth/roles";
 import RequireAuth from "./auth/require-auth.component";
 import useAuth from "./auth/auth-provider.hooks";
 import { useEffect } from "react";
+import { Admin } from "./admin/Admin";
 
 const overflowButtonProps: IButtonProps = { ariaLabel: 'More commands' };
 
@@ -75,15 +76,12 @@ const ApplicationMain: React.FunctionComponent<{}> = (props) => {
 
     setAuth({
       user: currrentContext.context.pageContext.user,
-      roles: [ROLES.User]
+      roles: [ROLES.User, ROLES.Admin]
     });
   }, [])
 
   return (
-    <>
-      <section className="default">
-        <LoadingSpinner />
-      </section>
+    <> 
       <section className="header">
         <CommandBar
           items={_items}
@@ -105,10 +103,11 @@ const ApplicationMain: React.FunctionComponent<{}> = (props) => {
             {/* we want to protect these routes */}
             <Route element={<RequireAuth allowedRoles={[ROLES.User]} />}>
               <Route path='/form-example' element={<FormExample />} /> 
+              <Route path='/counter' element={<Counter />} /> 
             </Route>
 
             <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}> 
-              <Route path='/counter' element={<Counter />} />
+              <Route path='/admin/*' element={<Admin />} />
             </Route>
 
             {/* catch all */}
