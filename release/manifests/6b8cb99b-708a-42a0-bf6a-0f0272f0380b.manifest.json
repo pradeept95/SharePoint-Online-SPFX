@@ -39,7 +39,7 @@
     "scriptResources": {
       "examples-web-part": {
         "type": "path",
-        "path": "examples-web-part_9a77138bd3385ed3efce.js"
+        "path": "examples-web-part_4e816cbed277e7d5e06e.js"
       },
       "@microsoft/sp-property-pane": {
         "type": "component",

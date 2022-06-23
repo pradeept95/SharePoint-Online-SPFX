@@ -6,6 +6,7 @@ import { PrimaryButton } from '@fluentui/react/lib/Button';
 import { IStackTokens, Stack } from 'office-ui-fabric-react'; 
 import { LoadingPros } from '../components/spinner/LoadingContext';
 import { useLoading } from '../hooks';
+import { useSecurityGroupService } from '../service';
 
 export interface ITestCounterProps {
   count?: number
@@ -16,6 +17,7 @@ export const Counter: React.FunctionComponent<ITestCounterProps> = (props) => {
   const [count, setCount] = useState(0);
   const [list, setList] = useState([]);
   const { setLoadingState } = useLoading();
+  const { getServiceGroupList }  = useSecurityGroupService();
 
   const context = AppContext.getInstance();
 
@@ -55,17 +57,20 @@ export const Counter: React.FunctionComponent<ITestCounterProps> = (props) => {
         loadingText : "Getting List Items"
       } as LoadingPros)
 
-      // get all the items from a list
-      const items: any[] = await sp.web.lists.getByTitle("MyFirstListSPFX").items();
-      console.log(items);
+      // // get all the items from a list
+      // const items: any[] = await sp.web.lists.getByTitle("MyFirstListSPFX").items();
+      // console.log(items);
 
-      // get a specific item by id.
-      const item: any = await sp.web.lists.getByTitle("MyFirstListSPFX").items.getById(1)();
-      console.log(item);
+      // // get a specific item by id.
+      // const item: any = await sp.web.lists.getByTitle("MyFirstListSPFX").items.getById(1)();
+      // console.log(item);
 
-      // use odata operators for more efficient queries
-      const items2: any[] = await sp.web.lists.getByTitle("MyFirstListSPFX").items.select("Title", "ID").top(5).orderBy("Modified", true)();
-      console.log(items2);
+      // // use odata operators for more efficient queries
+      // const items2: any[] = await sp.web.lists.getByTitle("MyFirstListSPFX").items.select("Title", "ID").top(5).orderBy("Modified", true)();
+      // console.log(items2);
+
+
+      const items = await getServiceGroupList();
 
       context.context.pageContext.web.permissions
 
@@ -76,8 +81,7 @@ export const Counter: React.FunctionComponent<ITestCounterProps> = (props) => {
         loading  : false 
       } as LoadingPros)
 
-    } catch (error) {
-      debugger;
+    } catch (error) { 
       setLoadingState({
         loading  : false 
       } as LoadingPros)

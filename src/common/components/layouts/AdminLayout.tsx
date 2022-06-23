@@ -1,4 +1,4 @@
-import { CommandBar, IButtonProps, ICommandBarItemProps, IStackProps, IStackStyles, Stack } from '@fluentui/react';
+import { CommandBar, IButtonProps, ICommandBarItemProps, IStackProps, IStackStyles, Separator, Stack } from '@fluentui/react';
 import * as React from 'react';
 import { Outlet, useNavigate } from "react-router-dom"
 import { AdminSidebar, AdminTopNav } from '../../admin/components';
@@ -25,6 +25,7 @@ export const AdminLayout: React.FunctionComponent = () => {
         </Stack>
         <Stack {...mainAreaProp}>
           <AdminTopNav />
+          <Separator></Separator>
           <Outlet />
         </Stack>
       </Stack>

@@ -42,7 +42,7 @@ export const AdminTopNav: React.FunctionComponent<{}> = (props) => {
                 overflowButtonProps={overflowButtonProps}
                 styles = {navStyles}
                 ariaLabel="Use left and right arrow keys to navigate between commands"
-            />
+            /> 
         </>
     );
 }

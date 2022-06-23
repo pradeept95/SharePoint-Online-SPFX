@@ -66,6 +66,7 @@ export const MainLayout : React.FunctionComponent = () => {
               overflowButtonProps={overflowButtonProps}
               ariaLabel="Use left and right arrow keys to navigate between commands"
             />
+            <hr />
             <Outlet />
         </main>
     )
