@@ -5,6 +5,7 @@
   "version": "0.0.1",
   "manifestVersion": 2,
   "requiresCustomScript": false,
+  "supportsFullBleed": true,
   "supportedHosts": [
     "SharePointWebPart",
     "TeamsPersonalApp",
@@ -38,12 +39,53 @@
     "scriptResources": {
       "examples-web-part": {
         "type": "path",
-        "path": "examples-web-part_753493a49628446d5344.js"
+        "path": "examples-web-part_9a77138bd3385ed3efce.js"
       },
       "@microsoft/sp-property-pane": {
         "type": "component",
         "id": "f9e737b7-f0df-4597-ba8c-3060f82380db",
         "version": "1.14.0"
+      },
+      "@microsoft/sp-lodash-subset": {
+        "type": "component",
+        "id": "73e1dc6c-8441-42cc-ad47-4bd3659f8a3a",
+        "version": "1.14.0"
+      },
+      "ControlStrings": {
+        "type": "localizedPath",
+        "paths": {
+          "bg-BG": "ControlStrings_bg-bg_563ca021db63b04d5f0a11a1057f4651.js",
+          "ca-ES": "ControlStrings_ca-es_09ca17f8103cf8b37099592af021710a.js",
+          "da-DK": "ControlStrings_da-dk_a7f8e7c33162d994415cb4fbdac502cd.js",
+          "de-DE": "ControlStrings_de-de_6333b0e6c9c12720de4dde539abf66dd.js",
+          "el-GR": "ControlStrings_el-gr_88d478c6224f8fa7e26e4b4823babafa.js",
+          "en-US": "ControlStrings_en-us_b4cd8c7b74220c708c8044df7f813da4.js",
+          "es-ES": "ControlStrings_es-es_8c8007a3a011810041a52c1a3f6129a1.js",
+          "et-EE": "ControlStrings_et-ee_9c76cd852693b2e599913b14c87ee2a9.js",
+          "eu-ES": "ControlStrings_eu-es_dd9c0118a3b5a4628088265625c16d97.js",
+          "fi-FI": "ControlStrings_fi-fi_3c45374119e54833144c5c8b110f2e4d.js",
+          "fr-CA": "ControlStrings_fr-ca_1edac53bab8671fd74139194f87e3ee6.js",
+          "fr-FR": "ControlStrings_fr-fr_21939c2424e2fa7c72c6d8ad712464c1.js",
+          "it-IT": "ControlStrings_it-it_919ae93afc7f595efa27457cd22c51a0.js",
+          "ja-JP": "ControlStrings_ja-jp_bfb37dc526214ef57b8ff422c390c471.js",
+          "lt-LT": "ControlStrings_lt-lt_244c5e8f909f6faa549b4afc8a358d7c.js",
+          "lv-LV": "ControlStrings_lv-lv_df574de74097684cebebb7ff4c142152.js",
+          "nb-NO": "ControlStrings_nb-no_e8e9e3f76da9d105126dd4dc55b8e6ab.js",
+          "nl-NL": "ControlStrings_nl-nl_17517759ba6c13531f4e3817724ba564.js",
+          "pl-PL": "ControlStrings_pl-pl_3f8cfb7dee7115495c3c0baf0182b319.js",
+          "pt-BR": "ControlStrings_pt-br_593655f092201b322c409731efc7587a.js",
+          "pt-PT": "ControlStrings_pt-pt_b6bfd6ee11bd17221fee2dfb9b533ae4.js",
+          "ro-RO": "ControlStrings_ro-ro_1b1d21d13e75606eb4dd2f4a96a5af9f.js",
+          "ru-RU": "ControlStrings_ru-ru_081ebc3c0d7d97d77b78217487f1a20c.js",
+          "sk-SK": "ControlStrings_sk-sk_f177beac4012ef4c54576407f365bdf3.js",
+          "sr-Latn-RS": "ControlStrings_sr-latn-rs_444eb0a63868ca76025fcc4549cf26c1.js",
+          "sv-SE": "ControlStrings_sv-se_10cb8e30b90f29a8d8bec5178d410b9e.js",
+          "tr-TR": "ControlStrings_tr-tr_2b275c7720d0927d9c71017af640f8d8.js",
+          "vi-VN": "ControlStrings_vi-vn_0a8a32d3446df93da5c03958dea8c69b.js",
+          "zh-CN": "ControlStrings_zh-cn_b96933b299a5e64d8b91aee03d503f39.js",
+          "zh-TW": "ControlStrings_zh-tw_590fbe14c5dd7614fc67b44947aba1cf.js"
+        },
+        "defaultPath": "ControlStrings_en-us_b4cd8c7b74220c708c8044df7f813da4.js"
       },
       "@microsoft/sp-core-library": {
         "type": "component",
@@ -68,6 +110,11 @@
         "type": "component",
         "id": "aa0a46ec-1505-43cd-a44a-93f3a5aa460a",
         "version": "16.13.1"
+      },
+      "@microsoft/sp-http": {
+        "type": "component",
+        "id": "c07208f0-ea3b-4c1a-9965-ac1b825211a6",
+        "version": "1.14.0"
       }
     }
   }

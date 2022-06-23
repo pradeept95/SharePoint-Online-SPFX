@@ -1,6 +1,6 @@
 import { AnimationClassNames, getTheme, Layer, mergeStyles, Spinner, SpinnerSize, Stack } from "@fluentui/react";
-import * as React from "react";
-import { usePageSpinner } from "../../hooks/useSpinner";
+import * as React from "react"; 
+import { useLoading } from "../../hooks";
 
 const theme = getTheme();
 const contentClass = mergeStyles([
@@ -19,7 +19,7 @@ const contentClass = mergeStyles([
 
 export const LoadingSpinner: React.FunctionComponent<{}> = (props) => {
 
-    const { loadingState } = usePageSpinner();
+    const { loadingState } = useLoading();
 
     const content = <div className={contentClass}>
                         <Stack>
@@ -48,7 +48,7 @@ export const LoadingSpinner: React.FunctionComponent<{}> = (props) => {
 
     return (
         <>
-            {loadingState?.loading ? <Layer>{content}</Layer> : ''}
+            { loadingState?.loading && <Layer>{content}</Layer>}
         </>
     );
 }

@@ -1,4 +1,4 @@
-import { AdminDashboard } from "./AdminMain";
+import { AdminDashboard } from "./AdminDashboard";
 import { AdminSidebar } from "./Sidebar";
 import { AdminTopNav } from "./TopNav";
 

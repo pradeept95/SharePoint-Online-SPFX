@@ -1,5 +1,2 @@
-import { Counter } from "../examples/counter.component";
-
-export {
-    Counter
-}
+export * from "./page-not-found/PageNotFound"
+export * from "./access-denied/AccessDenied"
