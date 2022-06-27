@@ -1,1 +1,1 @@
-export * from './useSecurityGroupService'
+export * from './useService'
