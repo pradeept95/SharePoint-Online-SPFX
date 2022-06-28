@@ -44,6 +44,13 @@ export const MainLayout : React.FunctionComponent = () => {
         disabled: false,
         onClick : () => navigate('/counter', { replace: true })  
       }, 
+      {
+        key: 'Detailed List',
+        text: 'detailedList',
+        iconProps: { iconName: 'Rotate90CounterClockwise' },
+        disabled: false,
+        onClick : () => navigate('/datatable', { replace: true })  
+      }, 
     ];
 
     const _farItems: ICommandBarItemProps[] = [

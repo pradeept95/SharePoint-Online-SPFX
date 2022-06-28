@@ -21,11 +21,14 @@
     "@pnp/logging": "^3.4.1",
     "@pnp/sp": "^3.4.1",
     "@pnp/spfx-controls-react": "^3.8.0",
+    "file-saver": "^2.0.5",
+    "fluentui-editable-grid": "^1.11.2",
     "formik": "^2.2.9",
     "office-ui-fabric-react": "7.174.1",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-router-dom": "^6.3.0",
+    "xlsx": "^0.18.5",
     "yup": "^0.32.11"
   },
   "devDependencies": {

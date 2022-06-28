@@ -3,14 +3,14 @@ import AppContext from "./config/app-context.config";
 import { Routes, Route } from 'react-router-dom';
 import { useEffect } from "react";
 import { Admin } from "./admin/Admin";
-import { Counter, FormExample, Home, LoadingExample } from "./examples";
+import { Counter, FormExample, GridExample, Home, LoadingExample } from "./examples";
 import { useAuth } from "./hooks";
 import { RequireAuth, ROLES } from "./auth";
 import { AdminLayout, MainLayout } from "./components/layouts";
 import { AccessDenied, PageNotFound } from "./components";
 import { initializeIcons } from "@fluentui/react";
 import { setIconOptions } from '@fluentui/react/lib/Styling';
-import { getSP } from "./config/pnpjs.config";
+import { getSP } from "./config/pnpjs.config"; 
 
 const ApplicationMain: React.FunctionComponent<{}> = (props) => {
 
@@ -67,6 +67,7 @@ const ApplicationMain: React.FunctionComponent<{}> = (props) => {
               <Route path='/form-example' element={<FormExample />} />
               <Route path='/counter' element={<Counter />} />
               <Route path='/loading' element={<LoadingExample />} />
+              <Route path='/datatable' element={<GridExample />} />
             </Route>
           </Route>
           <Route path="/admin" element={<AdminLayout />}>
