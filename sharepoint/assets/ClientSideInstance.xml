@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Elements xmlns="http://schemas.microsoft.com/sharepoint/">
+    <ClientSideComponentInstance
+        Title="SinglePageLayoutCustomizer"
+        Location="ClientSideExtension.ListViewCommandSet.CommandBar"
+        ListTemplateId="119"
+        Properties="{&quot;sampleTextOne&quot;:&quot;One item is selected in the list.&quot;, &quot;sampleTextTwo&quot;:&quot;This command is always visible.&quot;}"
+        ComponentId="1418804e-ce5e-45c1-9da8-526423ab6bd5" />
+</Elements>

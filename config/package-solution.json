@@ -30,7 +30,13 @@
         "title": "share-point-spfx-solution Feature",
         "description": "The feature that activates elements of the share-point-spfx-solution solution.",
         "id": "eab7fe2d-cc6f-4f43-8e2f-a891801de215",
-        "version": "1.0.0.0"
+        "version": "1.0.0.0",
+        "assets": {
+          "elementManifests": [
+            "elements.xml",
+            "ClientSideInstance.xml"
+          ]
+        }
       }
     ]
   },

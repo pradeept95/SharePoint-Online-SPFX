@@ -1,7 +1,7 @@
 {
   "@microsoft/generator-sharepoint": {
     "plusBeta": false,
-    "isCreatingSolution": true,
+    "isCreatingSolution": false,
     "version": "1.14.0",
     "libraryName": "share-point-spfx-solution",
     "libraryId": "287c85fd-09a9-42cd-bfcd-e313cafa3379",
@@ -11,6 +11,7 @@
     "solutionShortDescription": "SharePoint SPFX Solution description",
     "skipFeatureDeployment": true,
     "isDomainIsolated": false,
-    "componentType": "webpart"
+    "componentType": "extension",
+    "extensionType": "ListViewCommandSet"
   }
 }

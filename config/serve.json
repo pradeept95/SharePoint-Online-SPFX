@@ -2,5 +2,31 @@
   "$schema": "https://developer.microsoft.com/json-schemas/core-build/serve.schema.json",
   "port": 4321,
   "https": true,
-  "initialPage": "https://280vrx.sharepoint.com/sites/MyTestSite/_layouts/workbench.aspx"
+  "initialPage": "https://280vrx.sharepoint.com/sites/MyTestSite/_layouts/workbench.aspx",
+  "serveConfigurations": {
+    "default": {
+      "pageUrl": "https://280vrx.sharepoint.com/sites/MyTestSite/_layouts/workbench.aspx",
+      "customActions": {
+        "1418804e-ce5e-45c1-9da8-526423ab6bd5": {
+          "location": "ClientSideExtension.ListViewCommandSet.CommandBar",
+          "properties": {
+            "sampleTextOne": "One item is selected in the list",
+            "sampleTextTwo": "This command is always visible."
+          }
+        }
+      }
+    },
+    "singlePageLayoutCustomizer": {
+      "pageUrl": "https://280vrx.sharepoint.com/sites/MyTestSite/SitePages/Forms/ByAuthor.aspx",
+      "customActions": {
+        "1418804e-ce5e-45c1-9da8-526423ab6bd5": {
+          "location": "ClientSideExtension.ListViewCommandSet.CommandBar",
+          "properties": {
+            "sampleTextOne": "One item is selected in the list",
+            "sampleTextTwo": "This command is always visible."
+          }
+        }
+      }
+    }
+  }
 }

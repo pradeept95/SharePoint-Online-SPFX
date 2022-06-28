@@ -9,11 +9,20 @@
           "manifest": "./src/webparts/examples/ExamplesWebPart.manifest.json"
         }
       ]
+    },
+    "single-page-layout-customizer-command-set": {
+      "components": [
+        {
+          "entrypoint": "./lib/extensions/singlePageLayoutCustomizer/SinglePageLayoutCustomizerCommandSet.js",
+          "manifest": "./src/extensions/singlePageLayoutCustomizer/SinglePageLayoutCustomizerCommandSet.manifest.json"
+        }
+      ]
     }
   },
   "externals": {},
   "localizedResources": {
     "ExamplesWebPartStrings": "lib/webparts/examples/loc/{locale}.js",
-    "ControlStrings": "node_modules/@pnp/spfx-controls-react/lib/loc/{locale}.js"
+    "ControlStrings": "node_modules/@pnp/spfx-controls-react/lib/loc/{locale}.js",
+    "SinglePageLayoutCustomizerCommandSetStrings": "lib/extensions/singlePageLayoutCustomizer/loc/{locale}.js"
   }
 }
