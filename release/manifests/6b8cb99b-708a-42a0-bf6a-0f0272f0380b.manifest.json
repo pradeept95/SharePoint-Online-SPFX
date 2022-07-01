@@ -39,12 +39,36 @@
     "scriptResources": {
       "examples-web-part": {
         "type": "path",
-        "path": "examples-web-part_e39857439e87c19f8fa7.js"
+        "path": "examples-web-part_fd1c1032879c70a932b8.js"
       },
       "@microsoft/sp-property-pane": {
         "type": "component",
         "id": "f9e737b7-f0df-4597-ba8c-3060f82380db",
         "version": "1.14.0"
+      },
+      "@microsoft/sp-core-library": {
+        "type": "component",
+        "id": "7263c7d0-1d6a-45ec-8d85-d4d1d234171b",
+        "version": "1.14.0"
+      },
+      "ExamplesWebPartStrings": {
+        "type": "path",
+        "path": "ExamplesWebPartStrings_en-us_e7599a9530f36b7e64dfc6055407c58c.js"
+      },
+      "@microsoft/sp-webpart-base": {
+        "type": "component",
+        "id": "974a7777-0990-4136-8fa6-95d80114c2e0",
+        "version": "1.14.0"
+      },
+      "react": {
+        "type": "component",
+        "id": "0d910c1c-13b9-4e1c-9aa4-b008c5e42d7d",
+        "version": "16.13.1"
+      },
+      "react-dom": {
+        "type": "component",
+        "id": "aa0a46ec-1505-43cd-a44a-93f3a5aa460a",
+        "version": "16.13.1"
       },
       "@microsoft/sp-lodash-subset": {
         "type": "component",
@@ -86,30 +110,6 @@
           "zh-TW": "ControlStrings_zh-tw_590fbe14c5dd7614fc67b44947aba1cf.js"
         },
         "defaultPath": "ControlStrings_en-us_b4cd8c7b74220c708c8044df7f813da4.js"
-      },
-      "@microsoft/sp-core-library": {
-        "type": "component",
-        "id": "7263c7d0-1d6a-45ec-8d85-d4d1d234171b",
-        "version": "1.14.0"
-      },
-      "ExamplesWebPartStrings": {
-        "type": "path",
-        "path": "ExamplesWebPartStrings_en-us_e7599a9530f36b7e64dfc6055407c58c.js"
-      },
-      "@microsoft/sp-webpart-base": {
-        "type": "component",
-        "id": "974a7777-0990-4136-8fa6-95d80114c2e0",
-        "version": "1.14.0"
-      },
-      "react": {
-        "type": "component",
-        "id": "0d910c1c-13b9-4e1c-9aa4-b008c5e42d7d",
-        "version": "16.13.1"
-      },
-      "react-dom": {
-        "type": "component",
-        "id": "aa0a46ec-1505-43cd-a44a-93f3a5aa460a",
-        "version": "16.13.1"
       },
       "@microsoft/sp-http": {
         "type": "component",

@@ -1,5 +1,5 @@
 import * as React from "react"; 
-import Consumer from "./grid/gridconsumer";
+import Consumer from "./grid/GridConsumer";
 
 export const GridExample : React.FunctionComponent = () => {
     return (

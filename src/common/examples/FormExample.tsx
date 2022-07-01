@@ -1,18 +1,39 @@
-import { IStackProps, IStackStyles, PrimaryButton, DefaultButton, Stack, TextField, DatePicker, defaultDatePickerStrings } from "@fluentui/react";
+import { PrimaryButton, DefaultButton, Stack, TextField, DatePicker, defaultDatePickerStrings, mergeStyleSets, IStackTokens, IPersonaProps, Toggle, Checkbox, IIconStyles, Icon, Text, ITextFieldProps, memoizeFunction, ITheme, FontWeights, getTheme, IconButton, Callout, IButtonStyles, Label, MaskedTextField } from "@fluentui/react";
 import { useFormik } from "formik";
 import * as React from "react";
 import { formValidationSchema } from "./forms/defination/form.schema";
-import { PeoplePicker, PrincipalType } from "@pnp/spfx-controls-react/lib/PeoplePicker";
-import AppContext from "../config/app-context.config"; 
+import AppContext from "../config/app-context.config";
+import { PeoplePicker } from "../components/people-picker/PeoplePicker";
+import { PrincipalType } from '@pnp/spfx-controls-react/lib/PeoplePicker';
+import { useBoolean } from "@fluentui/react-hooks";
+import { renderFieldDescription, renderFieldErrorMessage, renderFieldLabelWithHelp } from "../components";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-const stackTokens = { childrenGap: 50 }; 
-const stackStyles: Partial<IStackStyles> = { root: { width: '100%', marginTop: '10px' } };
-const columnProps: Partial<IStackProps> = {
-    tokens: { childrenGap: 15 },
-    styles: { root: { width: 300 } },
+const gapStackTokens: IStackTokens = {
+    childrenGap: 5,
+    padding: 5,
 };
 
+const classNames = mergeStyleSets({
+    inputItem25: {
+        width: '25%'
+    },
+    inputItem50: {
+        width: '50%'
+    },
+    inputItem75: {
+        width: '75%'
+    },
+    inputItem100: {
+        width: '100%'
+    }
+});
+
 export const FormExample: React.FunctionComponent<{}> = (props) => {
+
+    const [selectedUsers, setSelectedUsers] = React.useState<IPersonaProps[]>([]);
+    const [isEditMode, { toggle: toggleEditMode }] = useBoolean(false);
 
     const appContext = AppContext.getInstance();
 
@@ -21,102 +42,250 @@ export const FormExample: React.FunctionComponent<{}> = (props) => {
             fullname: "",
             address: "",
             dateOfBirth: "",
-            profile: "" 
+            profile: "",
+            password: "",
+            confirmPassword: "",
+            phoneNumber: "",
+            domainName: "",
+            acceptTerms: false
         },
         validationSchema: formValidationSchema,
-        validateOnChange: true,
-        validateOnBlur: true,
+        //validateOnChange: true,
+        //validateOnBlur: true,
         onSubmit: (data) => {
             console.log(JSON.stringify(data, null, 2));
+            toast.success("Successfully saved", {
+                position: toast.POSITION.TOP_RIGHT
+            })
         },
+        onReset: () => {
+            toast.error("Form Reset", {
+                position: toast.POSITION.TOP_RIGHT
+            })
+            setSelectedUsers([]);
+        }
     });
 
-    const getErrorMessage  = (filedName : string) : string => {
-        return formik.touched[filedName] && formik.errors[filedName] ? formik.errors[filedName]:  "";
-    } 
-
-    const isRequiredField = (filedName : string) : boolean => {
-        return formik.touched[filedName] && formik.errors[filedName];
-    } 
+    const fieldHasError = (filedName: string): boolean => {
+        return formik.errors[filedName] && formik.touched[filedName];
+    }
 
     return (
         <>
+            <ToastContainer />
             <h1>Advance Form Example With Validation</h1> <hr />
             <div className="container">
                 <form onSubmit={formik.handleSubmit}>
-                    <Stack horizontal tokens={stackTokens} styles={stackStyles}>
-                        <Stack {...columnProps}>
-                        <PeoplePicker 
-                                context={appContext.context}
-                                titleText="Select an User"
-                                personSelectionLimit={1}
+                    <Toggle
+                        label="Enable or Disable Edit Mode"
+                        defaultChecked={isEditMode}
+                        onText="Edit Mode"
+                        offText="View Mode"
+                        onChange={toggleEditMode} />
 
-                                // Leave this blank in case you want to filter from all users
-                                groupName={""} 
-                                showtooltip={true}
-                                required={true}
-                                disabled={false}
-                                onChange={(peoples) => {
+                    <Stack horizontal tokens={gapStackTokens}>
+                        <Stack.Item className={classNames.inputItem75}>
+                            <PeoplePicker
+                                peoplePickerType="Compact"
+                                label="Employee Profile"
+                                placeholder="Enter name or email to search user"
+                                required={fieldHasError("profile")}
+                                defaultSelectedUsers={selectedUsers}
+                                onPeopleSelectChange={(peoples) => {
                                     console.log(peoples)
+                                    setSelectedUsers(peoples)
+
                                     const emails = peoples.map(x => x?.secondaryText)?.join(";")
                                     const names = peoples.map(x => x?.text)?.join(";")
-                                    formik.setFieldValue('profile', emails, false);
+                                    formik.setFieldValue('profile', emails, true);
                                     formik.setFieldValue('fullname', names, true);
+
                                 }}
-                                showHiddenInUI={false}
-                                principalTypes={[PrincipalType.User, PrincipalType.DistributionList, PrincipalType.SecurityGroup, PrincipalType.SharePointGroup]}
-                                resolveDelay={1000} 
-                                placeholder = "Please type at least 3 character to search user..."
-                                errorMessage={ getErrorMessage("profile") } 
-                            /> 
-                        </Stack>
-                        <Stack {...columnProps}>
-                        <TextField 
-                                name="fullname"
-                                label="Full Name"
-                                onChange={formik.handleChange}
-                                value={formik.values.fullname}
-                                errorMessage={ getErrorMessage("fullname") }
-                                placeholder="enter your full name..."
-                            /> 
-                            <span>{formik?.values?.profile}</span>
-                        </Stack>
+                                //{[PrincipalType.User, PrincipalType.DistributionList, PrincipalType.SecurityGroup, PrincipalType.SharePointGroup]}
+                                principalTypes={[PrincipalType.User]}
+                                showSecondaryText={false}
+                                personSelectionLimit={3}
+                                errorMessage={!selectedUsers?.length || fieldHasError('profile') ? formik.errors["profile"] : ''}
+                                description="This is the description text. We can have very long description for the field"
+                                disabled={false}
+                                readOnly={isEditMode}
+                            />
+                        </Stack.Item>
                     </Stack>
-                    <Stack horizontal tokens={stackTokens} styles={stackStyles}>
-                        <Stack {...columnProps}>
+
+                    <Stack horizontal tokens={gapStackTokens}>
+                        <Stack.Item className={classNames.inputItem100}>
+                            <span>{formik?.values?.profile}</span>
+                        </Stack.Item>
+                    </Stack>
+
+                    <Stack horizontal tokens={gapStackTokens}>
+                        <Stack.Item className={classNames.inputItem25}>
                             <DatePicker
-                                isRequired={isRequiredField("dateOfBirth")}
                                 label="Date of Birth"
                                 value={formik.values.dateOfBirth ? new Date(formik.values.dateOfBirth) : null}
                                 strings={
                                     {
-                                        ...defaultDatePickerStrings,
-                                        invalidInputErrorMessage: getErrorMessage("dateOfBirth")
+                                        ...defaultDatePickerStrings
                                     }}
                                 placeholder="Select a date..."
                                 onSelectDate={(val) => {
-                                    formik.setFieldValue('dateOfBirth', val, false);
-                                }} 
+                                    formik.setFieldValue('dateOfBirth', val, true);
+                                }}
+
                             />
-                        </Stack>
-                        <Stack {...columnProps}>
-                        <TextField
+                            {formik.errors['dateOfBirth'] ? renderFieldErrorMessage(formik.errors['dateOfBirth']) : ''}
+                        </Stack.Item>
+                        <Stack.Item className={classNames.inputItem50}>
+                            <TextField
+                                required={fieldHasError("fullname")}
+                                name="fullname"
+                                onRenderLabel={renderFieldLabelWithHelp}
+                                label="Full Name"
+                                onChange={formik.handleChange}
+                                value={formik.values.fullname}
+                                placeholder="enter your full name..."
+                                // onGetErrorMessage={() => renderFieldErrorMessage(formik.errors['fullname'])} 
+                                description="This field contains the name of the user whenever people select in the user profile. People picker currently configured 3 people. The names are seperated bye the semicolon."
+                                onRenderDescription={renderFieldDescription}
+                                //disabled={true}
+                                readOnly={true}
+                            />
+                            {fieldHasError("fullname") ? renderFieldErrorMessage(formik.errors["fullname"]) : ''}
+                        </Stack.Item>
+                    </Stack>
+
+                    <Stack horizontal tokens={gapStackTokens}>
+                        <Stack.Item className={classNames.inputItem75}>
+                            <TextField
                                 name="address"
                                 label="Address"
+                                required={fieldHasError("address")}
                                 onChange={formik.handleChange}
                                 value={formik.values.address}
-                                errorMessage={ getErrorMessage("address") }
+                                //onGetErrorMessage={() => renderFieldErrorMessage(formik.errors['address'])}
                                 placeholder="enter your address..."
+                                readOnly={isEditMode}
                             />
-                        </Stack>
+                            {fieldHasError("address") ? renderFieldErrorMessage(formik.errors["address"]) : ''}
+                        </Stack.Item>
                     </Stack>
-                    <Stack horizontal tokens={stackTokens} styles={stackStyles}>
-                        <Stack {...columnProps}>
+                    <Stack horizontal tokens={gapStackTokens}>
+                        <Stack.Item className={classNames.inputItem25}>
+                            <TextField
+                                name="password"
+                                label="Password"
+                                required={fieldHasError("password")}
+                                onChange={formik.handleChange}
+                                value={formik.values.password}
+                                //onGetErrorMessage={() => renderFieldErrorMessage(formik.errors['password'])}
+                                placeholder="Enter Password..."
+                                type="password"
+                                canRevealPassword
+                                revealPasswordAriaLabel="Show password"
+                                readOnly={isEditMode}
+                            />
+                            {fieldHasError("password") ? renderFieldErrorMessage(formik.errors["password"]) : ''}
+                        </Stack.Item>
+                        <Stack.Item className={classNames.inputItem50}>
+                            <TextField
+                                name="confirmPassword"
+                                label="Confirm Password"
+                                required={fieldHasError("confirmPassword")}
+                                onChange={formik.handleChange}
+                                value={formik.values.confirmPassword}
+                                //onGetErrorMessage={() => renderFieldErrorMessage(formik.errors['confirmPassword'])}
+                                placeholder="Confirm Your Password..."
+                                type="password"
+                                canRevealPassword
+                                revealPasswordAriaLabel="Show password"
+                                readOnly={isEditMode}
+                            />
+                            {fieldHasError("confirmPassword") ? renderFieldErrorMessage(formik.errors["confirmPassword"]) : ''}
+                        </Stack.Item>
+                    </Stack>
+                    <Stack horizontal tokens={gapStackTokens}>
+                        <Stack.Item className={classNames.inputItem25}>
+                            <MaskedTextField
+                                name="phoneNumber"
+                                label="Phone Number"
+                                required={fieldHasError("confirmPassword")}
+                                onChange={formik.handleChange}
+                                value={formik.values.phoneNumber}
+                                prefix={"+1"}
+                                mask="(***) ***-****"
+                                maskFormat={{
+                                    '*': /[0-9]/,
+                                }}
+                                maskChar="_"
+                                //errorMessage={formik.errors['phoneNumber']}
+                                placeholder="Enter your phone number"
+                                //onGetErrorMessage={() => renderFieldErrorMessage(formik.errors['phoneNumber'])}
+                                readOnly={isEditMode}
+                            />
+                            {fieldHasError("phoneNumber") ? renderFieldErrorMessage(formik.errors["phoneNumber"]) : ''}
+                        </Stack.Item>
+                        <Stack.Item className={classNames.inputItem50}>
+                            <TextField
+                                label="Domain Name"
+                                name="domainName"
+                                required={fieldHasError("domainName")}
+                                onChange={formik.handleChange}
+                                value={formik.values.domainName}
+                                prefix="https://"
+                                suffix=".com"
+                                readOnly={isEditMode}
+                            />
+                            {fieldHasError("domainName") ? renderFieldErrorMessage(formik.errors["domainName"]) : ''}
+                        </Stack.Item>
+                    </Stack>
+                    <Stack horizontal tokens={gapStackTokens}>
+                        <Stack.Item className={classNames.inputItem25}>
+                            <TextField
+                                label="With auto adjusting height"
+                                name="domainName"
+                                required={fieldHasError("domainName")}
+                                onChange={formik.handleChange}
+                                value={formik.values.domainName} 
+                                multiline autoAdjustHeight 
+                            />
+                            {fieldHasError("acceptTerms") ? renderFieldErrorMessage(formik.errors["domainName"]) : ''}
+
+                        </Stack.Item>
+                        <Stack.Item className={classNames.inputItem50}>
+                            <TextField
+                                label="With auto adjusting height"
+                                name="domainName"
+                                required={fieldHasError("domainName")}
+                                onChange={formik.handleChange}
+                                value={formik.values.domainName}
+                                multiline autoAdjustHeight />
+                            {fieldHasError("acceptTerms") ? renderFieldErrorMessage(formik.errors["domainName"]) : ''}
+
+                        </Stack.Item>
+                    </Stack>
+                    <Stack horizontal tokens={gapStackTokens}>
+                        <Stack.Item className={classNames.inputItem75}>
+                            <Checkbox
+                                name="acceptTerms"
+                                required={fieldHasError("acceptTerms")}
+                                onChange={formik.handleChange}
+                                checked={formik.values.acceptTerms}
+                                label="Accept Term. Lorem ipsum dolor sit amet consectetur adipisicing elit. Id necessitatibus quo commodi quod aperiam laudantium molestiae iure velit aliquam excepturi perspiciatis sapiente saepe, reprehenderit quis eum quam? Illo, nobis vitae."
+                                disabled={isEditMode}
+                            />
+                            {fieldHasError("acceptTerms") ? renderFieldErrorMessage(formik.errors["acceptTerms"]) : ''}
+
+                        </Stack.Item>
+                    </Stack> 
+
+                    <Stack horizontal tokens={gapStackTokens}>
+                        <Stack.Item>
                             <PrimaryButton text="Submit Form" onClick={formik.submitForm} />
-                        </Stack>
-                        <Stack {...columnProps}>
+                        </Stack.Item>
+                        <Stack.Item>
                             <DefaultButton text="Reset Form" onClick={formik.handleReset} />
-                        </Stack>
+                        </Stack.Item>
                     </Stack>
                 </form>
             </div>

@@ -2,6 +2,7 @@ import { IImageProps, ImageFit, Image, mergeStyles, AnimationClassNames } from '
 import * as React from 'react'
 import AppContext from '../../config/app-context.config';
 import { FormExample } from '../../examples';
+import GridConsumer from '../../examples/grid/GridConsumer';
 
 export const AdminDashboard: React.FunctionComponent<{}> = (props) => {
     const context = AppContext.getInstance();
@@ -28,14 +29,15 @@ export const AdminDashboard: React.FunctionComponent<{}> = (props) => {
             <div className='content' style={{ maxWidth: '100%' }}>
                 <h3>Welcome {context?.context?.pageContext?.user?.displayName}</h3>
                 <hr />
+                <GridConsumer/>
                 {/* <FormExample /> */}
-                <div className={dashboardImageClasss}>
+                {/* <div className={dashboardImageClasss}>
                     <Image
                         {...imageProps} 
                         width='60%'
                         height='60%'
                     /> 
-                </div>
+                </div> */}
             </div>
         </>
     );

@@ -138,7 +138,7 @@ export const ManageSecurityGroup: React.FunctionComponent<{
               /> */}
               <PeoplePicker
                 peoplePickerType='Normal'
-                onChange={onChangeTrigger}
+                onPeopleSelectChange={onChangeTrigger}
                 principalTypes={[PrincipalType.User, PrincipalType.SecurityGroup]}>
 
               </PeoplePicker>

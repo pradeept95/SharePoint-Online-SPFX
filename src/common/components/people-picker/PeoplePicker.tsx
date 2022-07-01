@@ -8,10 +8,35 @@ import {
     CompactPeoplePicker,
     NormalPeoplePicker,
     IPeoplePickerItemSelectedProps,
-    PeoplePickerItem, 
+    PeoplePickerItem,
+    IPeoplePickerProps,
+    IInputProps,
 } from '@fluentui/react/lib/Pickers';
-import { getSP } from '../../config/pnpjs.config';
+import { getGraphFi, getSP } from '../../config/pnpjs.config';
 import { PrincipalType } from '@pnp/spfx-controls-react/lib/PeoplePicker';
+import { useId } from '@fluentui/react-hooks';
+import { getTheme, IRenderFunction, ITextFieldProps, Label, mergeStyles, Text } from '@fluentui/react';
+import { renderFieldDescription, renderFieldErrorMessage, renderFieldLabelWithHelp } from '../forms/CustomFormElements';
+// import { renderFieldDescription, renderFieldErrorMessage, renderFieldLabel } from '../forms/CustomElements';
+
+interface PeoplePickerProps extends IInputProps {
+    label?: string;
+    onRenderLabel?: IRenderFunction<ITextFieldProps>;
+    peoplePickerType?: "Normal" | "Compact" | "List";
+    principalTypes?: PrincipalType[];
+    onPeopleSelectChange: (items: IPersonaProps[]) => any;
+    defaultSelectedUsers?: IPersonaProps[];
+    personSelectionLimit?: number;
+    required?: boolean;
+    resolveDelay?: number;
+    placeholder?: string;
+    errorMessage?: string; 
+    value?: any[];
+    disabled?: boolean;
+    description?: string
+    onRenderDescription?: IRenderFunction<ITextFieldProps>;
+    showSecondaryText?: boolean;
+}
 
 const suggestionProps: IBasePickerSuggestionsProps = {
     suggestionsHeaderText: 'Suggested People',
@@ -21,12 +46,6 @@ const suggestionProps: IBasePickerSuggestionsProps = {
     showRemoveButtons: true,
     suggestionsAvailableAlertText: 'People Picker Suggestions available',
     suggestionsContainerAriaLabel: 'Suggested contacts',
-};
-
-const checkboxStyles = {
-    root: {
-        marginTop: 10,
-    },
 };
 
 const personaStyles: Partial<IPersonaStyles> = {
@@ -43,40 +62,58 @@ const personaStyles: Partial<IPersonaStyles> = {
     },
 };
 
-export const PeoplePicker: React.FunctionComponent<{
-    peoplePickerType?: "Normal" | "Compact" | "List",
-    principalTypes ? : PrincipalType[]
-    onChange: (items : IPersonaProps[]) => any
-}> = ({ peoplePickerType, principalTypes, onChange }) => {
-    const [delayResults, setDelayResults] = React.useState(false);
-    const [isPickerDisabled, setIsPickerDisabled] = React.useState(false);
+export const PeoplePicker: React.FunctionComponent<PeoplePickerProps> = (props) => {
     const [mostRecentlyUsed, setMostRecentlyUsed] = React.useState<IPersonaProps[]>([]);
     const [peopleList, setPeopleList] = React.useState<IPersonaProps[]>([]);
-    const [showSecondaryText, setShowSecondaryText] = React.useState(true);
+    const [selectedPeople, setSelectedPeople] = React.useState<IPersonaProps[]>([]);
 
     const picker = React.useRef(null);
+    const peoplePickerId = useId('peoplePicker');
+
+    const { principalTypes, peoplePickerType, onPeopleSelectChange } = props;
 
     const getAllUsers = async () => {
+
+        // try {
+        //     const graph = await getGraphFi();
+
+        //     const allUsers = await graph.me.people();
+        //     console.log("allUsers")
+        //     console.table(allUsers)
+
+        // } catch (error) {
+        //     console.log(error)
+        // }
+
+
         const sp = await getSP();
         const users = await (await sp.web.siteUsers())
-                            .filter(x =>  principalTypes?.length == 0 
-                                || principalTypes.indexOf(x.PrincipalType) > -1);
+            .filter(x => principalTypes?.length == 0
+                || principalTypes.indexOf(x.PrincipalType) > -1);
         console.log(users);
-        setPeopleList(users.map(
+
+        const peoples = users.map(
             user => {
                 return ({
                     id: `${user.Id}`,
                     text: user.Title,
                     secondaryText: user.Email,
-                    tertiaryText: user.LoginName 
+                    tertiaryText: user.LoginName
                 } as IPersonaProps);
             }
-        ));
+        );
+        setPeopleList(peoples);
+
+        //setSelectedPeople(peoples.slice(0, 3));
     }
 
     React.useEffect(() => {
         getAllUsers();
     }, []);
+
+    React.useEffect(() => {
+        setSelectedPeople(props?.defaultSelectedUsers);
+    }, [props?.defaultSelectedUsers]);
 
     const onFilterChanged = (
         filterText: string,
@@ -95,11 +132,12 @@ export const PeoplePicker: React.FunctionComponent<{
     };
 
     const filterPersonasByText = (filterText: string): IPersonaProps[] => {
-        return peopleList.filter(item => doesTextStartWith(item.text as string, filterText));
+        return peopleList.filter(item => doesTextContainsName(item.text as string, filterText)
+            || doesTextContainsName(item.secondaryText as string, filterText));
     };
 
     const filterPromise = (personasToReturn: IPersonaProps[]): IPersonaProps[] | Promise<IPersonaProps[]> => {
-        if (delayResults) {
+        if (props?.resolveDelay) {
             return convertResultsToPromise(personasToReturn);
         } else {
             return personasToReturn;
@@ -129,14 +167,6 @@ export const PeoplePicker: React.FunctionComponent<{
         }
     };
 
-    const onDisabledButtonClick = (): void => {
-        setIsPickerDisabled(!isPickerDisabled);
-    };
-
-    const onToggleDelayResultsChange = (): void => {
-        setDelayResults(!delayResults);
-    }; 
-
     const onRenderSuggestionItem = (personaProps: IPersonaProps, suggestionsProps: IBasePickerSuggestionsProps) => {
         return (
             <PeoplePickerItemSuggestion
@@ -162,116 +192,90 @@ export const PeoplePicker: React.FunctionComponent<{
     function onInputChange(input: string): string {
         const outlookRegEx = /<.*>/g;
         const emailAddress = outlookRegEx.exec(input);
-      
+
         if (emailAddress && emailAddress[0]) {
-          return emailAddress[0].substring(1, emailAddress[0].length - 1);
+            return emailAddress[0].substring(1, emailAddress[0].length - 1);
         }
-      
+
         return input;
-    } 
+    }
+
+    const textFieldPros: ITextFieldProps = {
+        label: props?.label,
+        errorMessage: props?.errorMessage,
+        description: props?.description,
+        required : props?.required,
+        disabled : props?.disabled
+    }
+
+    const peoplePickerProps: IPeoplePickerProps = {
+        key: peoplePickerId,
+        ['aria-label']: props?.label ?? "Select User",
+        pickerSuggestionsProps: suggestionProps,
+        selectionAriaLabel: 'Selected Users',
+        removeButtonAriaLabel: 'Remove',
+        className: 'ms-PeoplePicker',
+        inputProps: {
+            ...props as IInputProps,
+            id: peoplePickerId,
+            disabled: props?.disabled,
+            placeholder: props?.placeholder ?? "",
+            required: props?.required,
+            className: mergeStyles([
+                {
+                    marginTop: "0px"
+                }
+            ])
+        },
+        componentRef: picker,
+        resolveDelay: props?.resolveDelay ?? 300,
+        itemLimit: props?.personSelectionLimit ?? 10,
+        selectedItems: props?.defaultSelectedUsers ?? [],
+        disabled: props?.disabled,
+        onResolveSuggestions: onFilterChanged,
+        onEmptyInputFocus: returnMostRecentlyUsed,
+        getTextFromItem: getTextFromItem,
+        onRenderSuggestionsItem: onRenderSuggestionItem,
+        onInputChange: onInputChange,
+        onRenderItem: props?.showSecondaryText ? renderItemWithSecondaryText : undefined,
+        onRemoveSuggestion: onRemoveSuggestion,
+        onValidateInput: validateInput,
+        onChange: onPeopleSelectChange
+    }
 
     const compactPeopelPicker = <>
         <CompactPeoplePicker
-            // eslint-disable-next-line react/jsx-no-bind
-            onResolveSuggestions={onFilterChanged}
-            // eslint-disable-next-line react/jsx-no-bind
-            onEmptyInputFocus={returnMostRecentlyUsed}
-            getTextFromItem={getTextFromItem}
-            pickerSuggestionsProps={suggestionProps}
-            selectionAriaLabel={'Selected contacts'}
-            removeButtonAriaLabel={'Remove'}
-            className={'ms-PeoplePicker'}
-            onRenderItem={showSecondaryText ? renderItemWithSecondaryText : undefined}
-            // eslint-disable-next-line react/jsx-no-bind
-            onRemoveSuggestion={onRemoveSuggestion}
-            onValidateInput={validateInput}
-            // inputProps={{
-            //     onBlur: (ev: React.FocusEvent<HTMLInputElement>) => console.log('onBlur called'),
-            //     onFocus: (ev: React.FocusEvent<HTMLInputElement>) => console.log('onFocus called'),
-            //     'aria-label': 'People Picker',
-            // }}
-            componentRef={picker}
-            resolveDelay={300}
-            disabled={isPickerDisabled}
-            onChange={onChange} 
-            itemLimit ={1}
-            searchingText = "Getting users"
+            {...peoplePickerProps}
         />
     </>;
 
     const listPeoplePicker = <>
         <ListPeoplePicker
-            // eslint-disable-next-line react/jsx-no-bind
-            onResolveSuggestions={onFilterChanged}
-            // eslint-disable-next-line react/jsx-no-bind
-            onEmptyInputFocus={returnMostRecentlyUsed}
-            getTextFromItem={getTextFromItem}
-            className={'ms-PeoplePicker'}
-            pickerSuggestionsProps={suggestionProps}
-            key={'list'}
-            selectionAriaLabel={'Selected contacts'}
-            onRenderItem={showSecondaryText ? renderItemWithSecondaryText : undefined}
-            removeButtonAriaLabel={'Remove'}
-            // eslint-disable-next-line react/jsx-no-bind
-            onRemoveSuggestion={onRemoveSuggestion}
-            // eslint-disable-next-line react/jsx-no-bind
-            onRenderSuggestionsItem={onRenderSuggestionItem}
-            onValidateInput={validateInput} 
-            // inputProps={{
-            //     onBlur: (ev: React.FocusEvent<HTMLInputElement>) => console.log('onBlur called'),
-            //     onFocus: (ev: React.FocusEvent<HTMLInputElement>) => console.log('onFocus called'),
-            //     'aria-label': 'People Picker',
-            // }}
-            componentRef={picker}
-            resolveDelay={300}
-            disabled={isPickerDisabled}
-            onChange={onChange}
-            itemLimit ={1} 
+            {...peoplePickerProps}
         />
     </>
 
     const normalPeoplePicker = <>
         <NormalPeoplePicker
-            // eslint-disable-next-line react/jsx-no-bind
-            onResolveSuggestions={onFilterChanged}
-            // eslint-disable-next-line react/jsx-no-bind
-            onEmptyInputFocus={returnMostRecentlyUsed}
-            getTextFromItem={getTextFromItem}
-            pickerSuggestionsProps={suggestionProps}
-            className={'ms-PeoplePicker'}
-            key={'normal'}
-            // eslint-disable-next-line react/jsx-no-bind
-            onRemoveSuggestion={onRemoveSuggestion}
-            onRenderItem={showSecondaryText ? renderItemWithSecondaryText : undefined}
-            onValidateInput={validateInput}
-            selectionAriaLabel={'Selected contacts'}
-            removeButtonAriaLabel={'Remove'} 
-            // inputProps={{
-            //     onBlur: (ev: React.FocusEvent<HTMLInputElement>) => console.log('onBlur called'),
-            //     onFocus: (ev: React.FocusEvent<HTMLInputElement>) => console.log('onFocus called'),
-            //     'aria-label': 'People Picker',
-            // }}
-            componentRef={picker}
-            onInputChange={onInputChange}
-            resolveDelay={300}
-            disabled={isPickerDisabled}
-            onChange={onChange}
-            itemLimit = {1}
+            {...peoplePickerProps}
         />
     </>
- 
+
     return (
         <>
+            {props?.label && renderFieldLabelWithHelp(textFieldPros)}
             {
                 (peoplePickerType == "List") ? listPeoplePicker :
-                    (peoplePickerType == "Normal") ? normalPeoplePicker :  compactPeopelPicker 
-            } 
+                    (peoplePickerType == "Normal") ? normalPeoplePicker : compactPeopelPicker
+            }
+            {props?.description && renderFieldDescription(textFieldPros)}
+            {props?.errorMessage ? renderFieldErrorMessage(props?.errorMessage) : ''}
         </>
     );
 };
 
-function doesTextStartWith(text: string, filterText: string): boolean {
-    return text.toLowerCase().indexOf(filterText.toLowerCase()) === 0;
+function doesTextContainsName(text: string, filterText: string): boolean {
+    return text.toLowerCase().indexOf(filterText.toLowerCase()) > -1;
 }
 
 function removeDuplicates(personas: IPersonaProps[], possibleDupes: IPersonaProps[]) {
@@ -282,7 +286,7 @@ function listContainsPersona(persona: IPersonaProps, personas: IPersonaProps[]) 
     if (!personas || !personas.length || personas.length === 0) {
         return false;
     }
-    return personas.filter(item => item.text === persona.text).length > 0;
+    return personas.filter(item => item.text === persona.text || item.secondaryText === persona.secondaryText).length > 0;
 }
 
 function convertResultsToPromise(results: IPersonaProps[]): Promise<IPersonaProps[]> {
@@ -290,7 +294,7 @@ function convertResultsToPromise(results: IPersonaProps[]): Promise<IPersonaProp
 }
 
 function getTextFromItem(persona: IPersonaProps): string {
-    return persona.text as string;
+    return persona.text as string || persona.secondaryText as string;
 }
 
 function validateInput(input: string): ValidationState {

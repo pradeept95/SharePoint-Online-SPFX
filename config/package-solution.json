@@ -1,7 +1,7 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
   "solution": {
-    "name": "share-point-spfx-solution-client-side-solution",
+    "name": "Sharepoint-Online-Example-Webpart",
     "id": "287c85fd-09a9-42cd-bfcd-e313cafa3379",
     "version": "1.0.0.0",
     "includeClientSideAssets": true,

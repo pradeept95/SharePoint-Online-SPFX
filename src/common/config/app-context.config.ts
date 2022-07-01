@@ -1,5 +1,5 @@
 import { WebPartContext } from "@microsoft/sp-webpart-base";
-import { getSP } from "./pnpjs.config";
+import { getGraphFi, getSP } from "./pnpjs.config";
 
 class AppContext {
     private static instance: AppContext;
@@ -18,6 +18,7 @@ class AppContext {
     public async initialize(context : WebPartContext){
         this.context = context;
         await getSP(this.context);
+        await getGraphFi(this.context);
     } 
 }
 

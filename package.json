@@ -11,14 +11,19 @@
   "dependencies": {
     "@fluentui/react": "^8.76.0",
     "@fluentui/react-hooks": "^8.6.0",
+    "@microsoft/decorators": "1.14.0",
     "@microsoft/rush-stack-compiler-4.2": "^0.1.2",
     "@microsoft/sp-core-library": "1.14.0",
+    "@microsoft/sp-dialog": "1.14.0",
+    "@microsoft/sp-listview-extensibility": "1.14.0",
     "@microsoft/sp-lodash-subset": "1.14.0",
     "@microsoft/sp-office-ui-fabric-core": "1.14.0",
     "@microsoft/sp-property-pane": "1.14.0",
     "@microsoft/sp-webpart-base": "1.14.0",
     "@pnp/core": "^3.4.1",
+    "@pnp/graph": "^3.4.1",
     "@pnp/logging": "^3.4.1",
+    "@pnp/queryable": "^3.4.1",
     "@pnp/sp": "^3.4.1",
     "@pnp/spfx-controls-react": "^3.8.0",
     "file-saver": "^2.0.5",
@@ -29,10 +34,7 @@
     "react-dom": "16.13.1",
     "react-router-dom": "^6.3.0",
     "xlsx": "^0.18.5",
-    "yup": "^0.32.11",
-    "@microsoft/decorators": "1.14.0",
-    "@microsoft/sp-listview-extensibility": "1.14.0",
-    "@microsoft/sp-dialog": "1.14.0"
+    "yup": "^0.32.11"
   },
   "devDependencies": {
     "@microsoft/sp-build-web": "1.14.0",

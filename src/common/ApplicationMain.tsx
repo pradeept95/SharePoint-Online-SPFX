@@ -9,7 +9,7 @@ import { RequireAuth, ROLES } from "./auth";
 import { AdminLayout, MainLayout } from "./components/layouts";
 import { AccessDenied, PageNotFound } from "./components";
 import { initializeIcons } from "@fluentui/react";
-import { setIconOptions } from '@fluentui/react/lib/Styling';
+import { mergeStyleSets, setIconOptions } from '@fluentui/react/lib/Styling';
 import { getSP } from "./config/pnpjs.config"; 
 
 const ApplicationMain: React.FunctionComponent<{}> = (props) => {
@@ -50,9 +50,7 @@ const ApplicationMain: React.FunctionComponent<{}> = (props) => {
 
     callApi();
 
-  }, [])
-
-  
+  }, []) 
 
   return (
     <>

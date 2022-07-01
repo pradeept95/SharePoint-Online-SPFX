@@ -1,11 +1,11 @@
 import { Checkbox, DefaultButton, DetailsList, DetailsListLayoutMode, DirectionalHint, Fabric, FontIcon, IButtonProps, IStackTokens, Link, mergeStyles, mergeStyleSets, SelectionMode, Stack, TeachingBubble, TextField } from 'office-ui-fabric-react';
 import * as React from 'react';
 import { useState } from 'react';
-import { GridColumnConfig, GridItemsType } from './gridconfig';
+import { GridColumnConfig, GridItemsType } from './grid.config';
 import { useBoolean } from '@fluentui/react-hooks';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { ITeachingBubbleConfig, teachingBubbleConfig } from './teachingconfig';
+import { ITeachingBubbleConfig, teachingBubbleConfig } from './teaching.config';
 import { EditableGrid, EventEmitter, EventType, ICallBackParams, IColumnConfig } from 'fluentui-editable-grid';
 import { Operation } from 'fluentui-editable-grid/dist/types/operation';
 
@@ -34,7 +34,8 @@ interface GridConfigOptions {
 const Consumer: React.FunctionComponent = () => {
 
     const [items, setItems] = useState<GridItemsType[]>([]);
-    const [teachingBubbleVisible, { toggle: toggleTeachingBubbleVisible }] = useBoolean(true);
+    const [teachingBubbleVisible, { toggle: toggleTeachingBubbleVisible }] = useBoolean(false);
+    const [gridSettingVisisble, { toggle: toggleGridSettingVisible }] = useBoolean(false);
     const [teachingBubblePropsConfig, setTeachingBubblePropsConfig] = useState<ITeachingBubbleConfig>({ id: 0, config: { ...teachingBubbleConfig[0], footerContent: `1 of ${teachingBubbleConfig.length}` } });
     const [gridConfigOptions, setGridConfigOptions] = useState<GridConfigOptions>({
         enableCellEdit: true,
@@ -56,30 +57,28 @@ const Consumer: React.FunctionComponent = () => {
         enableGridReset: true,
         enableColumnFilters: true,
         enableDefaultEditMode: false
-    });
-
-    const RowSize = 5;
+    }); 
 
     const classNames = mergeStyleSets({
         controlWrapper: {
             display: 'flex',
             flexWrap: 'wrap',
+            marginTop: '10px'
         },
         detailsDiv: {
-            border: '3px solid black',
-            margin: '5px'
+            border: '3px solid black', 
         },
         detailsValues: {
             color: '#0078d4'
         },
         checkbox: {
-            width: '200px'
+            width: '25%'
         }
     });
 
     const gapStackTokens: IStackTokens = {
-        childrenGap: 10,
-        padding: 2,
+        childrenGap: 5,
+        padding: 10,
     };
 
     const iconClass = mergeStyles({
@@ -224,88 +223,119 @@ const Consumer: React.FunctionComponent = () => {
     return (
         <Fabric>
             <ToastContainer />
-            <fieldset className={classNames.detailsDiv}>
-                <legend><b>Toggle:</b></legend>
+            {
+                gridSettingVisisble &&
+                <fieldset className={classNames.detailsDiv}>
+                    <legend><b>Toggle:</b></legend>
+                    <Stack horizontal tokens={gapStackTokens}>
+                        <Stack.Item className={classNames.checkbox}>
+                            <Checkbox id={"enableCellEdit"} label="Cell Edit" onChange={onCheckboxChange} checked={gridConfigOptions.enableCellEdit} />
+                        </Stack.Item>
+                        <Stack.Item className={classNames.checkbox}>
+                            <Checkbox id={"enableRowEdit"} label="Row Edit" onChange={onCheckboxChange} checked={gridConfigOptions.enableRowEdit} />
+                        </Stack.Item>
+                        <Stack.Item className={classNames.checkbox}>
+                            <Checkbox id={"enableRowEditCancel"} label="Row Edit Cancel" onChange={onCheckboxChange} checked={gridConfigOptions.enableRowEditCancel} />
+                        </Stack.Item>
+                        <Stack.Item className={classNames.checkbox}>
+                            <Checkbox id={"enableBulkEdit"} label="Bulk Edit" onChange={onCheckboxChange} checked={gridConfigOptions.enableBulkEdit} />
+                        </Stack.Item>
+                    </Stack>
+                    <Stack horizontal tokens={gapStackTokens}>
+                        <Stack.Item className={classNames.checkbox}>
+                            <Checkbox id={"enableColumnEdit"} label="Column Edit" onChange={onCheckboxChange} checked={gridConfigOptions.enableColumnEdit} />
+                        </Stack.Item>
+                        <Stack.Item className={classNames.checkbox}>
+                            <Checkbox id={"enableExport"} label="Export" onChange={onCheckboxChange} checked={gridConfigOptions.enableExport} />
+                        </Stack.Item>
+                        <Stack.Item className={classNames.checkbox}>
+                            <Checkbox id={"enableTextFieldEditMode"} label="TextField Edit Mode" onChange={onCheckboxChange} checked={gridConfigOptions.enableTextFieldEditMode} />
+                        </Stack.Item>
+                        <Stack.Item className={classNames.checkbox}>
+                            <Checkbox id={"enableTextFieldEditModeCancel"} label="TextField Edit Mode Cancel" onChange={onCheckboxChange} checked={gridConfigOptions.enableTextFieldEditModeCancel} />
+                        </Stack.Item>
+                    </Stack>
+                    <Stack horizontal tokens={gapStackTokens}>
+                        <Stack.Item className={classNames.checkbox}>
+                            <Checkbox id={"enableGridRowsDelete"} label="Row Delete" onChange={onCheckboxChange} checked={gridConfigOptions.enableGridRowsDelete} />
+                        </Stack.Item>
+                        <Stack.Item className={classNames.checkbox}>
+                            <Checkbox id={"enableGridRowsAdd"} label="Row Add" onChange={onCheckboxChange} checked={gridConfigOptions.enableGridRowsAdd} />
+                        </Stack.Item>
+                        <Stack.Item className={classNames.checkbox}>
+                            <Checkbox id={"enableColumnFilterRules"} label="Rule Based Filter" onChange={onCheckboxChange} checked={gridConfigOptions.enableColumnFilterRules} />
+                        </Stack.Item>
+                        <Stack.Item className={classNames.checkbox}>
+                            <Checkbox id={"enableRowAddWithValues"} label="Row Add Panel" onChange={onCheckboxChange} checked={gridConfigOptions.enableRowAddWithValues} />
+                        </Stack.Item>
+                    </Stack>
+                    <Stack horizontal tokens={gapStackTokens}>
+                        <Stack.Item className={classNames.checkbox}>
+                            <Checkbox id={"enableGridCopy"} label="Grid Copy" onChange={onCheckboxChange} checked={gridConfigOptions.enableGridCopy} />
+                        </Stack.Item>
+                        <Stack.Item className={classNames.checkbox}>
+                            <Checkbox id={"enableRowCopy"} label="Row Copy" onChange={onCheckboxChange} checked={gridConfigOptions.enableRowCopy} />
+                        </Stack.Item>
+                        <Stack.Item className={classNames.checkbox}>
+                            <Checkbox id={"enableUnsavedEditIndicator"} label="Unsaved Edit Indicator" onChange={onCheckboxChange} checked={gridConfigOptions.enableUnsavedEditIndicator} />
+                        </Stack.Item>
+                        <Stack.Item className={classNames.checkbox}>
+                            <Checkbox id={"enableSave"} label="Save" onChange={onCheckboxChange} checked={gridConfigOptions.enableSave} />
+                        </Stack.Item>
+                    </Stack>
+                    <Stack horizontal tokens={gapStackTokens}>
+                        <Stack.Item className={classNames.checkbox}>
+                            <Checkbox id={"enableGridReset"} label="Grid Reset" onChange={onCheckboxChange} checked={gridConfigOptions.enableGridReset} />
+                        </Stack.Item>
+                        <Stack.Item className={classNames.checkbox}>
+                            <Checkbox id={"enableColumnFilters"} label="Column Filters" onChange={onCheckboxChange} checked={gridConfigOptions.enableColumnFilters} />
+                        </Stack.Item>
+                        <Stack.Item className={classNames.checkbox}>
+                            <Checkbox id={"enableDefaultEditMode"} label="Default Edit Mode" onChange={onCheckboxChange} checked={gridConfigOptions.enableDefaultEditMode} />
+                        </Stack.Item>
+                    </Stack>
+                </fieldset>
+            }
+            <div>
                 <Stack horizontal tokens={gapStackTokens}>
-                    <Stack.Item className={classNames.checkbox}>
-                        <Checkbox id={"enableCellEdit"} label="Cell Edit" onChange={onCheckboxChange} checked={gridConfigOptions.enableCellEdit} />
+                    <Stack.Item align="end">
+                        <Link className={mergeStyles({ width: "150px", padding: '10px' })}>
+                            <FontIcon
+                                aria-label="View"
+                                iconName="View"
+                                className={iconClass}
+                                onClick={toggleTeachingBubbleVisible}
+                                id="tutorialinfo"
+                            />
+                            {
+                                gridSettingVisisble ?
+                                    <FontIcon
+                                        aria-label="Hide Settings"
+                                        iconName="Hide"
+                                        className={iconClass}
+                                        onClick={toggleGridSettingVisible}
+                                        id="tutorialinfo"
+                                    /> :
+                                    <FontIcon
+                                        aria-label="Show Settings"
+                                        iconName="DataManagementSettings"
+                                        className={iconClass}
+                                        onClick={toggleGridSettingVisible}
+                                        id="tutorialinfo"
+                                    />
+                            }
+                        </Link>
                     </Stack.Item>
-                    <Stack.Item className={classNames.checkbox}>
-                        <Checkbox id={"enableRowEdit"} label="Row Edit" onChange={onCheckboxChange} checked={gridConfigOptions.enableRowEdit} />
-                    </Stack.Item>
-                    <Stack.Item className={classNames.checkbox}>
-                        <Checkbox id={"enableRowEditCancel"} label="Row Edit Cancel" onChange={onCheckboxChange} checked={gridConfigOptions.enableRowEditCancel} />
-                    </Stack.Item>
-                    <Stack.Item className={classNames.checkbox}>
-                        <Checkbox id={"enableBulkEdit"} label="Bulk Edit" onChange={onCheckboxChange} checked={gridConfigOptions.enableBulkEdit} />
-                    </Stack.Item>
-                </Stack>
-                <Stack horizontal tokens={gapStackTokens}>
-                    <Stack.Item className={classNames.checkbox}>
-                        <Checkbox id={"enableColumnEdit"} label="Column Edit" onChange={onCheckboxChange} checked={gridConfigOptions.enableColumnEdit} />
-                    </Stack.Item>
-                    <Stack.Item className={classNames.checkbox}>
-                        <Checkbox id={"enableExport"} label="Export" onChange={onCheckboxChange} checked={gridConfigOptions.enableExport} />
-                    </Stack.Item>
-                    <Stack.Item className={classNames.checkbox}>
-                        <Checkbox id={"enableTextFieldEditMode"} label="TextField Edit Mode" onChange={onCheckboxChange} checked={gridConfigOptions.enableTextFieldEditMode} />
-                    </Stack.Item>
-                    <Stack.Item className={classNames.checkbox}>
-                        <Checkbox id={"enableTextFieldEditModeCancel"} label="TextField Edit Mode Cancel" onChange={onCheckboxChange} checked={gridConfigOptions.enableTextFieldEditModeCancel} />
+                    <Stack.Item align="end">
+                        <TextField 
+                        id="searchField" 
+                        placeholder='Search Grid' 
+                        className={mergeStyles({ width: '350px', padding: '10px' })} 
+                        onChange={(event) => EventEmitter.dispatch(EventType.onSearch, event)} />
+
                     </Stack.Item>
 
                 </Stack>
-                <Stack horizontal tokens={gapStackTokens}>
-                    <Stack.Item className={classNames.checkbox}>
-                        <Checkbox id={"enableGridRowsDelete"} label="Row Delete" onChange={onCheckboxChange} checked={gridConfigOptions.enableGridRowsDelete} />
-                    </Stack.Item>
-                    <Stack.Item className={classNames.checkbox}>
-                        <Checkbox id={"enableGridRowsAdd"} label="Row Add" onChange={onCheckboxChange} checked={gridConfigOptions.enableGridRowsAdd} />
-                    </Stack.Item>
-                    <Stack.Item className={classNames.checkbox}>
-                        <Checkbox id={"enableColumnFilterRules"} label="Rule Based Filter" onChange={onCheckboxChange} checked={gridConfigOptions.enableColumnFilterRules} />
-                    </Stack.Item>
-                    <Stack.Item className={classNames.checkbox}>
-                        <Checkbox id={"enableRowAddWithValues"} label="Row Add Panel" onChange={onCheckboxChange} checked={gridConfigOptions.enableRowAddWithValues} />
-                    </Stack.Item>
-                </Stack>
-                <Stack horizontal tokens={gapStackTokens}>
-                    <Stack.Item className={classNames.checkbox}>
-                        <Checkbox id={"enableGridCopy"} label="Grid Copy" onChange={onCheckboxChange} checked={gridConfigOptions.enableGridCopy} />
-                    </Stack.Item>
-                    <Stack.Item className={classNames.checkbox}>
-                        <Checkbox id={"enableRowCopy"} label="Row Copy" onChange={onCheckboxChange} checked={gridConfigOptions.enableRowCopy} />
-                    </Stack.Item>
-                    <Stack.Item className={classNames.checkbox}>
-                        <Checkbox id={"enableUnsavedEditIndicator"} label="Unsaved Edit Indicator" onChange={onCheckboxChange} checked={gridConfigOptions.enableUnsavedEditIndicator} />
-                    </Stack.Item>
-                    <Stack.Item className={classNames.checkbox}>
-                        <Checkbox id={"enableSave"} label="Save" onChange={onCheckboxChange} checked={gridConfigOptions.enableSave} />
-                    </Stack.Item>
-                </Stack>
-                <Stack horizontal tokens={gapStackTokens}>
-                    <Stack.Item className={classNames.checkbox}>
-                        <Checkbox id={"enableGridReset"} label="Grid Reset" onChange={onCheckboxChange} checked={gridConfigOptions.enableGridReset} />
-                    </Stack.Item>
-                    <Stack.Item className={classNames.checkbox}>
-                        <Checkbox id={"enableColumnFilters"} label="Column Filters" onChange={onCheckboxChange} checked={gridConfigOptions.enableColumnFilters} />
-                    </Stack.Item>
-                    <Stack.Item className={classNames.checkbox}>
-                        <Checkbox id={"enableDefaultEditMode"} label="Default Edit Mode" onChange={onCheckboxChange} checked={gridConfigOptions.enableDefaultEditMode} />
-                    </Stack.Item>
-                </Stack>
-            </fieldset>
-            <div className={classNames.controlWrapper}>
-                <TextField id="searchField" placeholder='Search Grid' className={mergeStyles({ width: '60vh', paddingBottom: '10px' })} onChange={(event) => EventEmitter.dispatch(EventType.onSearch, event)} />
-                <Link>
-                    <FontIcon
-                        aria-label="View"
-                        iconName="View"
-                        className={iconClass}
-                        onClick={toggleTeachingBubbleVisible}
-                        id="tutorialinfo"
-                    />
-                </Link>
             </div>
             <EditableGrid
                 id={1}
@@ -324,7 +354,7 @@ const Consumer: React.FunctionComponent = () => {
                 enableTextFieldEditModeCancel={gridConfigOptions.enableTextFieldEditModeCancel}
                 enableGridRowsDelete={gridConfigOptions.enableGridRowsDelete}
                 enableGridRowsAdd={gridConfigOptions.enableGridRowsAdd}
-                height={'70vh'}
+                height={'50vh'}
                 width={'100%'}
                 position={'relative'}
                 enableUnsavedEditIndicator={gridConfigOptions.enableUnsavedEditIndicator}
@@ -341,6 +371,10 @@ const Consumer: React.FunctionComponent = () => {
                 }}
                 onGridUpdate={onGridUpdate}
                 enableDefaultEditMode={gridConfigOptions.enableDefaultEditMode}
+                enablePagination={true}
+                pageSize={10}
+                usePageCache={true}
+
             />
 
             {teachingBubbleVisible && (

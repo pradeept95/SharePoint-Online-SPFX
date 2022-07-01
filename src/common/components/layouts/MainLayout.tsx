@@ -1,4 +1,4 @@
-import { CommandBar, IButtonProps, ICommandBarItemProps } from '@fluentui/react';
+import { CommandBar, IButtonProps, ICommandBarItemProps, mergeStyleSets } from '@fluentui/react';
 import * as React from 'react';  
 import { Outlet, useNavigate } from "react-router-dom"
 
@@ -63,7 +63,7 @@ export const MainLayout : React.FunctionComponent = () => {
         disabled: false,
         onClick : () => navigate('/admin/home', { replace: true })  
       }
-    ];
+    ]; 
     
     return (
         <main className="App">
