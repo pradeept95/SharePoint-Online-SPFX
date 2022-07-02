@@ -7,8 +7,7 @@ import { PeoplePicker } from "../components/people-picker/PeoplePicker";
 import { PrincipalType } from '@pnp/spfx-controls-react/lib/PeoplePicker';
 import { useBoolean } from "@fluentui/react-hooks";
 import { renderFieldDescription, renderFieldErrorMessage, renderFieldLabelWithHelp } from "../components";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+
 
 const gapStackTokens: IStackTokens = {
     childrenGap: 5,
@@ -54,14 +53,10 @@ export const FormExample: React.FunctionComponent<{}> = (props) => {
         //validateOnBlur: true,
         onSubmit: (data) => {
             console.log(JSON.stringify(data, null, 2));
-            toast.success("Successfully saved", {
-                position: toast.POSITION.TOP_RIGHT
-            })
+           
         },
         onReset: () => {
-            toast.error("Form Reset", {
-                position: toast.POSITION.TOP_RIGHT
-            })
+           
             setSelectedUsers([]);
         }
     });
@@ -71,8 +66,7 @@ export const FormExample: React.FunctionComponent<{}> = (props) => {
     }
 
     return (
-        <>
-            <ToastContainer />
+        <> 
             <h1>Advance Form Example With Validation</h1> <hr />
             <div className="container">
                 <form onSubmit={formik.handleSubmit}>

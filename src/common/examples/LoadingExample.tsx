@@ -1,30 +1,20 @@
 import { PrimaryButton } from '@fluentui/react';
 import * as React from 'react'
 import { useEffect } from 'react'; 
-import { LoadingPros } from '../components/spinner/LoadingContext';
-import { useLoading } from '../hooks';
+import { useLoadingService } from '../service/useLoadingService';
 
-export const LoadingExample: React.FunctionComponent<{}> = (props) => {
-
-    const { setLoadingState } = useLoading();
-
-    const showLoading = () => {
-        setLoadingState({
-            loading: true,
-            loadingText: "Hello Loading, Trigger from Admin "
-        } as LoadingPros);
+export const LoadingExample: React.FunctionComponent<{}> = (props) => { 
+    const loader = useLoadingService();
+    
+    const showLoading = () => { 
+        loader.showLoader("I am loading");
 
         setTimeout(() => {
-            setLoadingState({
-                loading: true,
-                loadingText: "Hello Loading, Trigger from Admin after some time "
-            } as LoadingPros);
+            loader.showLoader("Hey, did you notice, message just got updated.");
         }, 3000);
 
         setTimeout(() => {
-            setLoadingState({
-                loading: false
-            } as LoadingPros);
+            loader.hideLoader();
         }, 7000);
     }
 

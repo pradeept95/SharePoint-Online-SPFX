@@ -24,19 +24,25 @@ export const MainLayout : React.FunctionComponent = () => {
               iconProps: { iconName: 'OfficeFormsLogoInverse16' }, 
               onClick: () => navigate('/form-example', { replace: true }),
             },
-            { key: 'calendarEvent', text: 'Calendar event', iconProps: { iconName: 'Calendar' } },
+            { 
+              key: 'alert', 
+              text: 'Alert Example', 
+              iconProps: { iconName: 'MailAlert' }, 
+              onClick: () => navigate('/alert', { replace: true }),
+            },
+            {
+              key: 'loading',
+              text: 'Loading Example',
+              iconProps: { iconName: 'Sync' },
+              split: true,
+              ariaLabel: 'Loading',
+              onClick : () => navigate('/loading', { replace: true })  
+               
+            } 
           ],
         },
       },
-      {
-        key: 'loading',
-        text: 'Loading Example',
-        iconProps: { iconName: 'Sync' },
-        split: true,
-        ariaLabel: 'Loading',
-        onClick : () => navigate('/loading', { replace: true })  
-         
-      },
+      
       {
         key: 'counter',
         text: 'Coutner',

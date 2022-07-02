@@ -11,6 +11,7 @@ import { AccessDenied, PageNotFound } from "./components";
 import { initializeIcons } from "@fluentui/react";
 import { mergeStyleSets, setIconOptions } from '@fluentui/react/lib/Styling';
 import { getSP } from "./config/pnpjs.config"; 
+import { AlertExample } from "./examples/AlertExample";
 
 const ApplicationMain: React.FunctionComponent<{}> = (props) => {
 
@@ -65,6 +66,7 @@ const ApplicationMain: React.FunctionComponent<{}> = (props) => {
               <Route path='/form-example' element={<FormExample />} />
               <Route path='/counter' element={<Counter />} />
               <Route path='/loading' element={<LoadingExample />} />
+              <Route path='/alert' element={<AlertExample />} />
               <Route path='/datatable' element={<GridExample />} />
             </Route>
           </Route>

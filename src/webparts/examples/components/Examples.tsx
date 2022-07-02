@@ -4,6 +4,7 @@ import ApplicationMain from '../../../common/ApplicationMain';
 import { HashRouter as Router } from 'react-router-dom';
 import { AuthProvider } from '../../../common/auth/AuthProvider';
 import { LoadingProvider } from '../../../common/components/spinner/LoadingContext';
+import { AlertProvider } from '../../../common/components/alert/AlertContext';
 
 export default class Examples extends React.Component<IExamplesProps, {}> {
 
@@ -13,7 +14,9 @@ export default class Examples extends React.Component<IExamplesProps, {}> {
         <Router>
           <LoadingProvider>
             <AuthProvider>
-              <ApplicationMain />
+              <AlertProvider>
+                <ApplicationMain />
+              </AlertProvider>
             </AuthProvider>
           </LoadingProvider>
         </Router>
