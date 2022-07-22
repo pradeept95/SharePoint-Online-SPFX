@@ -5,8 +5,7 @@ import { FormExample } from '../../examples';
 import GridConsumer from '../../examples/grid/GridConsumer';
 
 export const AdminDashboard: React.FunctionComponent<{}> = (props) => {
-    const context = AppContext.getInstance();
-
+    
     const image: any = require('./../../assets/frontend.svg');
 
     const imageProps: IImageProps = {
@@ -26,9 +25,7 @@ export const AdminDashboard: React.FunctionComponent<{}> = (props) => {
 
     return (
         <>
-            <div className='content' style={{ maxWidth: '100%' }}>
-                <h3>Welcome {context?.context?.pageContext?.user?.displayName}</h3>
-                <hr />
+            <div className='content' style={{ maxWidth: '100%' }}> 
                 <GridConsumer/>
                 {/* <FormExample /> */}
                 {/* <div className={dashboardImageClasss}>

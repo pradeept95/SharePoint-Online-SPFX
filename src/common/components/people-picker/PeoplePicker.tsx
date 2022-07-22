@@ -231,7 +231,7 @@ export const PeoplePicker: React.FunctionComponent<PeoplePickerProps> = (props) 
         resolveDelay: props?.resolveDelay ?? 300,
         itemLimit: props?.personSelectionLimit ?? 10,
         selectedItems: props?.defaultSelectedUsers ?? [],
-        disabled: props?.disabled,
+        disabled: props?.disabled, 
         onResolveSuggestions: onFilterChanged,
         onEmptyInputFocus: returnMostRecentlyUsed,
         getTextFromItem: getTextFromItem,

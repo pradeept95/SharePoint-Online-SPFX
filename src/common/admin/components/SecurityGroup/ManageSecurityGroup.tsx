@@ -15,7 +15,7 @@ export const ManageSecurityGroup: React.FunctionComponent<{
 }> = ({ securityGroup, panelMode, dismissPanel }) => {
 
   const [groupUsers, setGroupUsers] = React.useState<ISiteUserInfo[]>([]);
-  const [selectedUsers, setSelectedUsers] = React.useState<ISiteUserInfo[]>([]);
+  const [selectedUsers, setSelectedUsers] = React.useState<IPersonaProps[]>([]);
   const [loading, { setTrue: showLoading, setFalse: hideLoading }] = useBoolean(false);
 
   const { getAllUsersInSecurityGroup, addUserToGroup, removeUserFromGroup, createServiceGroup } = useSecurityGroupService();
@@ -43,12 +43,11 @@ export const ManageSecurityGroup: React.FunctionComponent<{
     console.log();
     showLoading();
     for (let index = 0; index < selectedUsers.length; index++) {
-      const user = selectedUsers[index];
-
-      await addUserToGroup(securityGroup?.Id, user?.LoginName);
-      
+      const user = selectedUsers[index]; 
+      await addUserToGroup(securityGroup?.Id, user?.tertiaryText); // tertiaryText is an login Name 
     }
     await getAllUsers(); 
+    setSelectedUsers([]);
     hideLoading();
   }
 
@@ -75,15 +74,15 @@ export const ManageSecurityGroup: React.FunctionComponent<{
   ];
 
   const onChangeTrigger = async (peoples: IPersonaProps[]) => {
-    const users : ISiteUserInfo[] = peoples.map(ppl => {
-      return {
-        Id : +ppl?.id,
-        Title: ppl?.text,
-        Email : ppl.secondaryText,
-        LoginName : ppl.tertiaryText 
-      } as ISiteUserInfo;
-    })
-    setSelectedUsers(users);
+    // const users : ISiteUserInfo[] = peoples.map(ppl => {
+    //   return {
+    //     Id : +ppl?.id,
+    //     Title: ppl?.text,
+    //     Email : ppl.secondaryText,
+    //     LoginName : ppl.tertiaryText 
+    //   } as ISiteUserInfo;
+    // })
+    setSelectedUsers(peoples);
     console.log("onChangeTrigger", peoples);
   };
 
@@ -136,10 +135,23 @@ export const ManageSecurityGroup: React.FunctionComponent<{
                 placeholder="Please type at least 3 character to search user..."
                 //errorMessage={getErrorMessage("profile")}
               /> */}
-              <PeoplePicker
-                peoplePickerType='Normal'
+              <PeoplePicker 
                 onPeopleSelectChange={onChangeTrigger}
-                principalTypes={[PrincipalType.User, PrincipalType.SecurityGroup]}>
+                defaultSelectedUsers={selectedUsers}
+                principalTypes={[PrincipalType.User, PrincipalType.SecurityGroup]}
+                peoplePickerType="List" 
+                placeholder="Enter name or email to search user"
+                required={true} 
+                showSecondaryText={false}
+                personSelectionLimit={30} 
+                description="Select User and Click on Add User to Save in the group."
+                disabled={false}
+                readOnly={false}
+                style = {
+                  {
+                    minWidth : 300
+                  }
+                }>
 
               </PeoplePicker>
               <PrimaryButton onClick={() => addNewUser()} disabled={ selectedUsers.length < 1}>Add User</PrimaryButton>

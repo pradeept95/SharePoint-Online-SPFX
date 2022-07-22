@@ -3,6 +3,12 @@
     "examples-web-part": {
       "dependencies": [
         {
+          "componentId": "73e1dc6c-8441-42cc-ad47-4bd3659f8a3a",
+          "componentName": "@microsoft/sp-lodash-subset",
+          "componentVersion": "1.14.0",
+          "isDirectDependency": true
+        },
+        {
           "componentId": "f9e737b7-f0df-4597-ba8c-3060f82380db",
           "componentName": "@microsoft/sp-property-pane",
           "componentVersion": "1.14.0",
@@ -23,12 +29,6 @@
         {
           "componentId": "e40f8203-b39d-425a-a957-714852e33b79",
           "componentName": "@microsoft/sp-dynamic-data",
-          "componentVersion": "1.14.0",
-          "isDirectDependency": false
-        },
-        {
-          "componentId": "73e1dc6c-8441-42cc-ad47-4bd3659f8a3a",
-          "componentName": "@microsoft/sp-lodash-subset",
           "componentVersion": "1.14.0",
           "isDirectDependency": false
         },

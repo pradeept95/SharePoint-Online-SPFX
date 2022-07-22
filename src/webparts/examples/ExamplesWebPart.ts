@@ -12,9 +12,11 @@ import * as strings from 'ExamplesWebPartStrings';
 import Examples from './components/Examples';
 import { IExamplesProps } from './components/IExamplesProps';
 import AppContext from '../../common/config/app-context.config';
+import { ISiteSettingProps } from '../../common/settings/SiteSettingsProps';
 
 export interface IExamplesWebPartProps {
   description: string;
+  settings : ISiteSettingProps
 }
 
 export default class ExamplesWebPart extends BaseClientSideWebPart<IExamplesWebPartProps> {
@@ -36,6 +38,9 @@ export default class ExamplesWebPart extends BaseClientSideWebPart<IExamplesWebP
       Examples,
       {
         description: this.properties.description,
+        settings : {
+          sitePrefix : this.properties.description,
+        },
         isDarkTheme: this._isDarkTheme,
         environmentMessage: this._environmentMessage,
         hasTeamsContext: !!this.context.sdks.microsoftTeams,
@@ -88,6 +93,9 @@ export default class ExamplesWebPart extends BaseClientSideWebPart<IExamplesWebP
             {
               groupName: strings.BasicGroupName,
               groupFields: [
+                PropertyPaneTextField('sitePrefix', {
+                  label: 'Site Prefix'
+                }),
                 PropertyPaneTextField('description', {
                   label: strings.DescriptionFieldLabel
                 })

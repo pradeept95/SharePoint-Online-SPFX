@@ -1,10 +1,12 @@
 import { WebPartContext } from "@microsoft/sp-webpart-base";
+import { ISiteSettingProps } from "../settings/SiteSettingsProps";
 import { getGraphFi, getSP } from "./pnpjs.config";
 
 class AppContext {
     private static instance: AppContext;
 
     public context : WebPartContext
+    public siteSettings? : ISiteSettingProps
   
     private constructor() {}
   
@@ -20,6 +22,10 @@ class AppContext {
         await getSP(this.context);
         await getGraphFi(this.context);
     } 
+
+    public async addSetting(siteSettings : ISiteSettingProps){
+      this.siteSettings = siteSettings; 
+  } 
 }
 
 export default AppContext;

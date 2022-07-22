@@ -1,4 +1,4 @@
-import { PrimaryButton, DefaultButton, Stack, TextField, DatePicker, defaultDatePickerStrings, mergeStyleSets, IStackTokens, IPersonaProps, Toggle, Checkbox, IIconStyles, Icon, Text, ITextFieldProps, memoizeFunction, ITheme, FontWeights, getTheme, IconButton, Callout, IButtonStyles, Label, MaskedTextField } from "@fluentui/react";
+import { PrimaryButton, DefaultButton, Stack, TextField, DatePicker, defaultDatePickerStrings, mergeStyleSets, IStackTokens, IPersonaProps, Toggle, Checkbox, IIconStyles, Icon, Text, ITextFieldProps, memoizeFunction, ITheme, FontWeights, getTheme, IconButton, Callout, IButtonStyles, Label, MaskedTextField, Facepile, IFacepilePersona, PersonaSize, PersonaPresence, IDropdownOption, DropdownMenuItemType, Dropdown, ActionButton, Layer } from "@fluentui/react";
 import { useFormik } from "formik";
 import * as React from "react";
 import { formValidationSchema } from "./forms/defination/form.schema";
@@ -7,6 +7,7 @@ import { PeoplePicker } from "../components/people-picker/PeoplePicker";
 import { PrincipalType } from '@pnp/spfx-controls-react/lib/PeoplePicker';
 import { useBoolean } from "@fluentui/react-hooks";
 import { renderFieldDescription, renderFieldErrorMessage, renderFieldLabelWithHelp } from "../components";
+import { Counter } from "./Counter";
 
 
 const gapStackTokens: IStackTokens = {
@@ -14,7 +15,23 @@ const gapStackTokens: IStackTokens = {
     padding: 5,
 };
 
+const options: IDropdownOption[] = [
+    { key: 'fruitsHeader', text: 'Fruits', itemType: DropdownMenuItemType.Header },
+    { key: 'apple', text: 'Apple' },
+    { key: 'banana', text: 'Banana' },
+    { key: 'orange', text: 'Orange', disabled: true },
+    { key: 'grape', text: 'Grape' },
+    { key: 'divider_1', text: '-', itemType: DropdownMenuItemType.Divider },
+    { key: 'vegetablesHeader', text: 'Vegetables', itemType: DropdownMenuItemType.Header },
+    { key: 'broccoli', text: 'Broccoli' },
+    { key: 'carrot', text: 'Carrot' },
+    { key: 'lettuce', text: 'Lettuce' },
+];
+
 const classNames = mergeStyleSets({
+    inputItem20: {
+        width: '20%'
+    },
     inputItem25: {
         width: '25%'
     },
@@ -29,10 +46,18 @@ const classNames = mergeStyleSets({
     }
 });
 
+const helpDetails: JSX.Element
+    = <>
+        <h2>Hello form Help</h2>
+        <p>This is help description</p>
+        <Counter />
+    </>;
+
 export const FormExample: React.FunctionComponent<{}> = (props) => {
 
     const [selectedUsers, setSelectedUsers] = React.useState<IPersonaProps[]>([]);
-    const [isEditMode, { toggle: toggleEditMode }] = useBoolean(false);
+    const [isViewMode, { toggle: toggleEditMode }] = useBoolean(false);
+    const [showFormikData, { toggle: toggleFormikData }] = useBoolean(false);
 
     const appContext = AppContext.getInstance();
 
@@ -46,35 +71,186 @@ export const FormExample: React.FunctionComponent<{}> = (props) => {
             confirmPassword: "",
             phoneNumber: "",
             domainName: "",
+            externalContact: [
+                {
+                    contactName: "",
+                    contactPhone: "",
+                    contactEmail: "",
+                    organization: "",
+                }
+            ],
             acceptTerms: false
         },
         validationSchema: formValidationSchema,
-        //validateOnChange: true,
-        //validateOnBlur: true,
+        //validateOnChange : true,
         onSubmit: (data) => {
             console.log(JSON.stringify(data, null, 2));
-           
         },
         onReset: () => {
-           
             setSelectedUsers([]);
         }
     });
 
     const fieldHasError = (filedName: string): boolean => {
-        return formik.errors[filedName] && formik.touched[filedName];
+        return (formik.touched[filedName] && (formik.errors[filedName]));
+    }
+
+    const getTextFieldDefaultProps = (
+        fieldName: string,
+        label?: string,
+        placeholder?: string,
+        disabled: boolean = false,
+        readOnly: boolean = false) => {
+        return ({
+            required: fieldHasError(fieldName),
+            name: fieldName ?? '',
+            label: label ?? '',
+            value: formik.values?.[fieldName],
+            placeholder: placeholder ?? '',
+            disabled: disabled,
+            readOnly: readOnly,
+            onChange: formik?.handleChange,
+            onBlur: () => {
+                formik?.setFieldTouched(fieldName, true);
+            },
+            //onGetErrorMessage : () => renderFieldErrorMessage(formik.errors[fieldName]),
+            validateOnFocusIn: true,
+            validateOnFocusOut: true,
+            validateOnLoad: true,
+        });
+    }
+
+    const [imagesFadeIn, { toggle: toggleImagesFadeIn }] = useBoolean(true);
+    const [numberOfFaces, setNumberOfFaces] = React.useState(3);
+    const [personaSize, setPersonaSize] = React.useState(PersonaSize.size32);
+
+    const getPersonaPresence = (personaName: string): PersonaPresence => {
+        const presences = [
+            PersonaPresence.away,
+            PersonaPresence.busy,
+            PersonaPresence.online,
+            PersonaPresence.offline,
+            PersonaPresence.offline,
+        ];
+        return presences[personaName.charCodeAt(1) % 5];
+    };
+
+    const getPersonaProps = React.useCallback(
+        (persona: IFacepilePersona) => ({
+            imageShouldFadeIn: imagesFadeIn,
+            presence: getPersonaPresence(persona.personaName!),
+        }),
+        [imagesFadeIn],
+    );
+
+    const users = selectedUsers.map((x) => {
+        return ({ personaName: x.text } as IFacepilePersona)
+    });
+
+    const personas = React.useMemo(() => selectedUsers.map((x) => {
+        return ({ personaName: x.text } as IFacepilePersona)
+    }).slice(0, numberOfFaces), [selectedUsers]);
+    const overflowPersonas = React.useMemo(() => selectedUsers.map((x) => {
+        return ({ personaName: x.text } as IFacepilePersona)
+    }).slice(numberOfFaces), [selectedUsers]);
+
+    const addExternalContactRow = () => {
+        formik.setFieldValue('externalContact',
+            [...formik.values?.externalContact,
+            {
+                contactName: "",
+                contactPhone: "",
+                contactEmail: "",
+                organization: "",
+            }]);
+
+        formik.validateField("externalContact");
+    }
+
+    const deleteExternalContactRow = (index: number) => {
+        const contactList = [...formik.values?.externalContact];
+        contactList?.splice(index, 1);
+        formik.setFieldValue('externalContact', [...contactList])
+        formik.validateField("externalContact");
+    }
+
+    const renderExternalContactItem = (externalContact, index: number) => {
+        // const externalContact = formik?.values?.externalContact[index];
+        const errors = formik?.errors?.externalContact?.length ? formik?.errors?.externalContact[index] : {};
+        const touched = formik?.touched?.externalContact?.length ? formik?.touched?.externalContact[index] : {};
+
+        const isLastRow = formik?.values?.externalContact?.length === (index + 1);
+        const isSingleRow = formik?.values?.externalContact?.length === 1;
+
+        return (
+            <Stack horizontal tokens={gapStackTokens} key={index}>
+                <Stack.Item className={classNames.inputItem20}>
+                    <TextField
+                        name={`externalContact.${index}.contactName`}
+                        placeholder="Contact Name"
+                        onChange={formik.handleChange}
+                        value={externalContact?.contactName}
+                        readOnly={isViewMode}
+                        onBlur={() => {
+                            formik.setFieldTouched(`externalContact.${index}.contactName`, true)
+                        }}
+                    />
+                    {touched?.contactName && errors?.['contactName'] ? renderFieldErrorMessage(errors?.['contactName']) : ''}
+                </Stack.Item>
+                <Stack.Item className={classNames.inputItem20}>
+                    <MaskedTextField
+                        name={`externalContact.${index}.contactPhone`}
+                        placeholder="Contact Phone"
+                        onChange={formik.handleChange}
+                        value={externalContact?.contactPhone}
+                        readOnly={isViewMode}
+                        prefix={"+1"}
+                        mask="(***) ***-****"
+                        maskFormat={{
+                            '*': /[0-9]/,
+                        }}
+                        maskChar="_"
+                    />
+                    {touched?.contactPhone && errors?.['contactPhone'] ? renderFieldErrorMessage(errors['contactPhone']) : ''}
+                </Stack.Item>
+                <Stack.Item className={classNames.inputItem20}>
+                    <TextField
+                        name={`externalContact.${index}.contactEmail`}
+                        placeholder="Email Address"
+                        onChange={formik.handleChange}
+                        value={externalContact?.contactEmail}
+                        readOnly={isViewMode}
+                    />
+                    {touched?.contactEmail && errors?.['contactEmail'] ? renderFieldErrorMessage(errors['contactEmail']) : ''}
+                </Stack.Item>
+                <Stack.Item className={classNames.inputItem20}>
+                    <TextField
+                        name={`externalContact.${index}.organization`}
+                        placeholder="Organization Name"
+                        onChange={formik.handleChange}
+                        value={externalContact?.organization}
+                        readOnly={isViewMode}
+                    />
+                    {touched?.organization && errors?.['organization'] ? renderFieldErrorMessage(errors['organization']) : ''}
+                </Stack.Item>
+                <Stack.Item className={classNames.inputItem20}>
+                    {isLastRow && <ActionButton iconProps={{ iconName: 'AddFriend' }} disabled={isViewMode} onClick={addExternalContactRow} />}
+                    <ActionButton iconProps={{ iconName: 'Delete' }} disabled={isViewMode || isSingleRow} onClick={() => deleteExternalContactRow(index)} />
+                </Stack.Item>
+            </Stack>
+        );
     }
 
     return (
-        <> 
+        <>
             <h1>Advance Form Example With Validation</h1> <hr />
             <div className="container">
                 <form onSubmit={formik.handleSubmit}>
                     <Toggle
                         label="Enable or Disable Edit Mode"
-                        defaultChecked={isEditMode}
-                        onText="Edit Mode"
-                        offText="View Mode"
+                        defaultChecked={isViewMode}
+                        onText="View Mode"
+                        offText="Edit Mode"
                         onChange={toggleEditMode} />
 
                     <Stack horizontal tokens={gapStackTokens}>
@@ -95,14 +271,17 @@ export const FormExample: React.FunctionComponent<{}> = (props) => {
                                     formik.setFieldValue('fullname', names, true);
 
                                 }}
+                                onBlur={() => {
+                                    formik.setFieldTouched('profile', true)
+                                }}
                                 //{[PrincipalType.User, PrincipalType.DistributionList, PrincipalType.SecurityGroup, PrincipalType.SharePointGroup]}
                                 principalTypes={[PrincipalType.User]}
                                 showSecondaryText={false}
-                                personSelectionLimit={3}
-                                errorMessage={!selectedUsers?.length || fieldHasError('profile') ? formik.errors["profile"] : ''}
+                                personSelectionLimit={30}
+                                errorMessage={!selectedUsers?.length && fieldHasError('profile') ? formik.errors["profile"] : ''}
                                 description="This is the description text. We can have very long description for the field"
-                                disabled={false}
-                                readOnly={isEditMode}
+                                disabled={isViewMode}
+                                readOnly={isViewMode}
                             />
                         </Stack.Item>
                     </Stack>
@@ -110,6 +289,18 @@ export const FormExample: React.FunctionComponent<{}> = (props) => {
                     <Stack horizontal tokens={gapStackTokens}>
                         <Stack.Item className={classNames.inputItem100}>
                             <span>{formik?.values?.profile}</span>
+                        </Stack.Item>
+                    </Stack>
+                    <Stack horizontal tokens={gapStackTokens}>
+                        <Stack.Item className={classNames.inputItem100}>
+                            <Facepile
+                                personaSize={personaSize}
+                                personas={personas}
+                                overflowPersonas={overflowPersonas}
+                                getPersonaProps={getPersonaProps}
+                                ariaDescription="To move through the items use left and right arrow keys."
+                                ariaLabel="Selected Users"
+                            />
                         </Stack.Item>
                     </Stack>
 
@@ -126,24 +317,24 @@ export const FormExample: React.FunctionComponent<{}> = (props) => {
                                 onSelectDate={(val) => {
                                     formik.setFieldValue('dateOfBirth', val, true);
                                 }}
-
+                                onBlur={() => {
+                                    formik.setFieldTouched('dateOfBirth', true)
+                                }}
                             />
-                            {formik.errors['dateOfBirth'] ? renderFieldErrorMessage(formik.errors['dateOfBirth']) : ''}
+                            {fieldHasError('dateOfBirth') ? renderFieldErrorMessage(formik.errors['dateOfBirth']) : ''}
                         </Stack.Item>
                         <Stack.Item className={classNames.inputItem50}>
                             <TextField
-                                required={fieldHasError("fullname")}
-                                name="fullname"
-                                onRenderLabel={renderFieldLabelWithHelp}
-                                label="Full Name"
-                                onChange={formik.handleChange}
-                                value={formik.values.fullname}
-                                placeholder="enter your full name..."
-                                // onGetErrorMessage={() => renderFieldErrorMessage(formik.errors['fullname'])} 
+                                {...getTextFieldDefaultProps(
+                                    'fullname',
+                                    'Full Name',
+                                    'Enter Full Name',
+                                    false,
+                                    isViewMode)
+                                }
+                                onRenderLabel={(fieldProps) => renderFieldLabelWithHelp(fieldProps, true, helpDetails)}
                                 description="This field contains the name of the user whenever people select in the user profile. People picker currently configured 3 people. The names are seperated bye the semicolon."
                                 onRenderDescription={renderFieldDescription}
-                                //disabled={true}
-                                readOnly={true}
                             />
                             {fieldHasError("fullname") ? renderFieldErrorMessage(formik.errors["fullname"]) : ''}
                         </Stack.Item>
@@ -152,14 +343,14 @@ export const FormExample: React.FunctionComponent<{}> = (props) => {
                     <Stack horizontal tokens={gapStackTokens}>
                         <Stack.Item className={classNames.inputItem75}>
                             <TextField
-                                name="address"
-                                label="Address"
-                                required={fieldHasError("address")}
-                                onChange={formik.handleChange}
-                                value={formik.values.address}
-                                //onGetErrorMessage={() => renderFieldErrorMessage(formik.errors['address'])}
-                                placeholder="enter your address..."
-                                readOnly={isEditMode}
+                                {...getTextFieldDefaultProps(
+                                    'address',
+                                    'Address',
+                                    'Enter Your Address',
+                                    false,
+                                    isViewMode)
+                                }
+                                onRenderLabel={(fieldProps) => renderFieldLabelWithHelp(fieldProps, true, helpDetails)}
                             />
                             {fieldHasError("address") ? renderFieldErrorMessage(formik.errors["address"]) : ''}
                         </Stack.Item>
@@ -167,33 +358,31 @@ export const FormExample: React.FunctionComponent<{}> = (props) => {
                     <Stack horizontal tokens={gapStackTokens}>
                         <Stack.Item className={classNames.inputItem25}>
                             <TextField
-                                name="password"
-                                label="Password"
-                                required={fieldHasError("password")}
-                                onChange={formik.handleChange}
-                                value={formik.values.password}
-                                //onGetErrorMessage={() => renderFieldErrorMessage(formik.errors['password'])}
-                                placeholder="Enter Password..."
+                                {...getTextFieldDefaultProps(
+                                    'password',
+                                    'Password',
+                                    'Enter Password...',
+                                    false,
+                                    isViewMode)
+                                }
                                 type="password"
                                 canRevealPassword
                                 revealPasswordAriaLabel="Show password"
-                                readOnly={isEditMode}
                             />
                             {fieldHasError("password") ? renderFieldErrorMessage(formik.errors["password"]) : ''}
                         </Stack.Item>
                         <Stack.Item className={classNames.inputItem50}>
                             <TextField
-                                name="confirmPassword"
-                                label="Confirm Password"
-                                required={fieldHasError("confirmPassword")}
-                                onChange={formik.handleChange}
-                                value={formik.values.confirmPassword}
-                                //onGetErrorMessage={() => renderFieldErrorMessage(formik.errors['confirmPassword'])}
-                                placeholder="Confirm Your Password..."
+                                {...getTextFieldDefaultProps(
+                                    'confirmPassword',
+                                    'Confirm Password',
+                                    'Confirm Password...',
+                                    false,
+                                    isViewMode)
+                                }
                                 type="password"
                                 canRevealPassword
                                 revealPasswordAriaLabel="Show password"
-                                readOnly={isEditMode}
                             />
                             {fieldHasError("confirmPassword") ? renderFieldErrorMessage(formik.errors["confirmPassword"]) : ''}
                         </Stack.Item>
@@ -201,34 +390,33 @@ export const FormExample: React.FunctionComponent<{}> = (props) => {
                     <Stack horizontal tokens={gapStackTokens}>
                         <Stack.Item className={classNames.inputItem25}>
                             <MaskedTextField
-                                name="phoneNumber"
-                                label="Phone Number"
-                                required={fieldHasError("confirmPassword")}
-                                onChange={formik.handleChange}
-                                value={formik.values.phoneNumber}
+                                {...getTextFieldDefaultProps(
+                                    'phoneNumber',
+                                    'Phone Number',
+                                    'Enter Phone Number...',
+                                    false,
+                                    isViewMode)
+                                }
                                 prefix={"+1"}
                                 mask="(***) ***-****"
                                 maskFormat={{
                                     '*': /[0-9]/,
                                 }}
                                 maskChar="_"
-                                //errorMessage={formik.errors['phoneNumber']}
-                                placeholder="Enter your phone number"
-                                //onGetErrorMessage={() => renderFieldErrorMessage(formik.errors['phoneNumber'])}
-                                readOnly={isEditMode}
                             />
                             {fieldHasError("phoneNumber") ? renderFieldErrorMessage(formik.errors["phoneNumber"]) : ''}
                         </Stack.Item>
                         <Stack.Item className={classNames.inputItem50}>
                             <TextField
-                                label="Domain Name"
-                                name="domainName"
-                                required={fieldHasError("domainName")}
-                                onChange={formik.handleChange}
-                                value={formik.values.domainName}
+                                {...getTextFieldDefaultProps(
+                                    'domainName',
+                                    'Domain Name',
+                                    'Enter Domain Name...',
+                                    false,
+                                    isViewMode)
+                                }
                                 prefix="https://"
                                 suffix=".com"
-                                readOnly={isEditMode}
                             />
                             {fieldHasError("domainName") ? renderFieldErrorMessage(formik.errors["domainName"]) : ''}
                         </Stack.Item>
@@ -240,11 +428,10 @@ export const FormExample: React.FunctionComponent<{}> = (props) => {
                                 name="domainName"
                                 required={fieldHasError("domainName")}
                                 onChange={formik.handleChange}
-                                value={formik.values.domainName} 
-                                multiline autoAdjustHeight 
+                                value={formik.values.domainName}
+                                multiline autoAdjustHeight
                             />
                             {fieldHasError("acceptTerms") ? renderFieldErrorMessage(formik.errors["domainName"]) : ''}
-
                         </Stack.Item>
                         <Stack.Item className={classNames.inputItem50}>
                             <TextField
@@ -253,9 +440,34 @@ export const FormExample: React.FunctionComponent<{}> = (props) => {
                                 required={fieldHasError("domainName")}
                                 onChange={formik.handleChange}
                                 value={formik.values.domainName}
-                                multiline autoAdjustHeight />
+                                multiline autoAdjustHeight
+                            />
                             {fieldHasError("acceptTerms") ? renderFieldErrorMessage(formik.errors["domainName"]) : ''}
+                        </Stack.Item>
+                    </Stack>
+                    <Stack horizontal tokens={gapStackTokens}>
+                        <Stack.Item className={classNames.inputItem25}>
+                            <Dropdown
+                                placeholder="Select an option"
+                                label="Basic uncontrolled example"
+                                options={options}
+                                //name="domainName" 
 
+                                required={fieldHasError("domainName")}
+                                onChange={formik.handleChange}
+                                defaultSelectedKey={formik.values.domainName}
+                                disabled={isViewMode}
+                            />
+                        </Stack.Item>
+                        <Stack.Item className={classNames.inputItem50}>
+                            <Dropdown
+                                placeholder="Select options"
+                                label="Multi-select uncontrolled example"
+                                defaultSelectedKeys={['apple', 'banana', 'grape']}
+                                multiSelect
+                                options={options}
+                                disabled={isViewMode}
+                            />
                         </Stack.Item>
                     </Stack>
                     <Stack horizontal tokens={gapStackTokens}>
@@ -266,19 +478,72 @@ export const FormExample: React.FunctionComponent<{}> = (props) => {
                                 onChange={formik.handleChange}
                                 checked={formik.values.acceptTerms}
                                 label="Accept Term. Lorem ipsum dolor sit amet consectetur adipisicing elit. Id necessitatibus quo commodi quod aperiam laudantium molestiae iure velit aliquam excepturi perspiciatis sapiente saepe, reprehenderit quis eum quam? Illo, nobis vitae."
-                                disabled={isEditMode}
+                                disabled={isViewMode}
                             />
                             {fieldHasError("acceptTerms") ? renderFieldErrorMessage(formik.errors["acceptTerms"]) : ''}
 
                         </Stack.Item>
-                    </Stack> 
+                    </Stack>
 
                     <Stack horizontal tokens={gapStackTokens}>
+                        <Stack.Item className={classNames.inputItem100}>
+                            <h3>External Contacts</h3>
+                            <hr />
+                        </Stack.Item>
+                    </Stack>
+
+                    <Stack horizontal tokens={gapStackTokens}>
+                        <Stack.Item className={classNames.inputItem20}>
+                            {renderFieldLabelWithHelp({ label: 'Contact Name', required: true, description: "Please enter contact name" } as ITextFieldProps)}
+                        </Stack.Item>
+                        <Stack.Item className={classNames.inputItem20}>
+                            {renderFieldLabelWithHelp({ label: 'Contact Phone', required: true, description: "Please enter Contact phone number" } as ITextFieldProps)}
+                        </Stack.Item>
+                        <Stack.Item className={classNames.inputItem20}>
+                            {renderFieldLabelWithHelp({ label: 'Email Address', required: true, description: "Please enter email address" } as ITextFieldProps)}
+                        </Stack.Item>
+                        <Stack.Item className={classNames.inputItem20}>
+                            {renderFieldLabelWithHelp({ label: 'Organization', description: "Please enter Organization name" } as ITextFieldProps)}
+                        </Stack.Item>
+                        <Stack.Item className={classNames.inputItem20}>
+                            {renderFieldLabelWithHelp({ label: 'Actions', description: "Please enter Organization name" } as ITextFieldProps)}
+                        </Stack.Item>
+                    </Stack>
+
+                    {
+                        formik.values["externalContact"]?.length ?
+                            <>
+                                {
+                                    formik.values?.["externalContact"]?.map((item, index) => renderExternalContactItem(item, index))
+                                }
+                            </> :
+                            <>
+                            </>
+                    }
+
+                    <Stack horizontal tokens={gapStackTokens}>
+                        <Stack.Item className={classNames.inputItem75}>
+                            <Toggle
+                                label="Enable or Disable Edit Mode"
+                                defaultChecked={showFormikData}
+                                onText="Showing Formik Data"
+                                offText="Hiding Formik Data"
+                                onChange={toggleFormikData}
+                            />
+                            {
+                                showFormikData && <pre>{JSON.stringify(formik, null, 2)}</pre>
+                            }
+                            {/* <pre>{JSON.stringify(formik.errors, null, 2)}</pre>
+                            <pre>{JSON.stringify(formik.touched, null, 2)}</pre>
+                            <pre>{JSON.stringify(formik.getFieldMeta("externalContact"), null, 2)}</pre> */}
+                        </Stack.Item>
+                    </Stack>
+                    <Stack horizontal tokens={gapStackTokens}>
                         <Stack.Item>
-                            <PrimaryButton text="Submit Form" onClick={formik.submitForm} />
+                            <PrimaryButton disabled={isViewMode} text="Submit Form" onClick={formik.submitForm} />
                         </Stack.Item>
                         <Stack.Item>
-                            <DefaultButton text="Reset Form" onClick={formik.handleReset} />
+                            <DefaultButton disabled={isViewMode} text="Reset Form" onClick={formik.handleReset} />
                         </Stack.Item>
                     </Stack>
                 </form>

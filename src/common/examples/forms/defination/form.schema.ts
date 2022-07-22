@@ -32,6 +32,15 @@ export const formValidationSchema = Yup.object().shape({
 
   domainName: Yup.string().required("Domain Name is Required"),
 
+  externalContact: Yup.array().of(
+    Yup.object().shape({
+      contactName: Yup.string().required("Contact Name is Required"),
+      contactPhone: Yup.string().required("Contact Phone is Required"),
+      contactEmail: Yup.string().required("Email Address is Required").email("Enter a Valid Email"),
+      organization: Yup.string().required("Organization is Required")
+    })
+  ), 
+
   acceptTerms: Yup.bool().oneOf([true], "Accept Terms and condition"),
 });
 
