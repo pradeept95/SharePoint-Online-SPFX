@@ -40,8 +40,17 @@ export const formValidationSchema = Yup.object().shape({
       organization: Yup.string().required("Organization is Required")
     })
   ), 
-
+  description : Yup.string().required("Description is Required"), 
   acceptTerms: Yup.bool().oneOf([true], "Accept Terms and condition"),
 });
 
 export type FormType = Yup.InferType<typeof formValidationSchema>;
+
+export const emailValidationSchema = Yup.object().shape({
+  from: Yup.string().required("From Email is Required.").email("Email is invalid"),
+  to: Yup.array().of(Yup.string().email("Email is invalid")).required("To Email is Required."),
+  cc: Yup.array().of(Yup.string().email("Email is invalid")),
+  bcc: Yup.array().of(Yup.string().email("Email is invalid")),
+  subject: Yup.string().required("Subject is Required."),
+  body: Yup.string().required("Email Body is Required.")
+})

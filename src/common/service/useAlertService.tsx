@@ -1,7 +1,8 @@
 import { getTheme } from '@fluentui/react';
 import { toast, ToastContent, ToastOptions } from 'react-toastify';
+import Swal, { SweetAlertResult } from 'sweetalert2'; 
 
-const DEFAULT_POSITION  = toast.POSITION.TOP_CENTER;
+const DEFAULT_POSITION  = toast.POSITION.TOP_CENTER; 
 
 export const useAlertService = () => {
     (async () => { })();
@@ -70,11 +71,32 @@ export const useAlertService = () => {
         }
     };
 
+    const confirmDelete = (message : string) : Promise<SweetAlertResult> => {
+        try { 
+            return Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+              }) 
+        } catch (error) {
+            console.log("showLoader -> error", error);
+            throw error;
+        }
+    };
+
+    
+
     return {
         success,
         error,
         info,
         warning,
-        dark
+        dark,
+
+        confirmDelete
     };
 }

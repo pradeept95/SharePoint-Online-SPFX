@@ -1,5 +1,6 @@
 import { ISiteGroupInfo } from "@pnp/sp/site-groups";
 import { ISiteUserInfo } from "@pnp/sp/site-users";
+import AppContext from "../../config/app-context.config";
 import { getSP } from "../../config/pnpjs.config";
 
 
@@ -38,8 +39,14 @@ export const useSecurityGroupService = () => {
     const createServiceGroup = async (groupName: string) => {
         try {
             const sp = await getSP();
+            const appContext = AppContext.getInstance();
             // Creates a new site group with the specified title
-            await sp.web.siteGroups.add({ "Title": groupName });
+            await sp.web.siteGroups.add({ 
+                Title: groupName,
+                AllowMembersEditMembership : true,
+                OwnerTitle : appContext.context?.pageContext?.user?.loginName,
+                OnlyAllowMembersViewMembership : false
+            } as ISiteGroupInfo);
 
         } catch (error) {
             console.log("createServiceGroup -> error", error);

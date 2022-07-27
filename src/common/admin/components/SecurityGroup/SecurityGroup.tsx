@@ -1,12 +1,17 @@
-import { ActionButton, Customizer, DetailsList, DetailsListLayoutMode, IconButton, IFocusTrapZoneProps, ILayerProps, Panel, PanelType, SelectionMode } from '@fluentui/react';
+import { ActionButton, Customizer, DefaultButton, DetailsList, DetailsListLayoutMode, IconButton, IFocusTrapZoneProps, ILayerProps, IStackTokens, Panel, PanelType, SelectionMode, Stack } from '@fluentui/react';
 import { useBoolean, useId } from '@fluentui/react-hooks';
 import { ISiteGroupInfo } from '@pnp/sp/site-groups';
 import { PrimaryButton } from 'office-ui-fabric-react';
 import * as React from 'react'
 import { useEffect, useState } from 'react';
+import { useAlertService } from '../../../service/useAlertService';
 import { useSecurityGroupService } from '../../services';
 import { ManageSecurityGroup } from './ManageSecurityGroup';
 
+const gapStackTokens: IStackTokens = {
+    childrenGap: 5,
+    padding: 5,
+};
 
 
 export const SecurityGroup: React.FunctionComponent<{}> = (props) => {
@@ -16,7 +21,8 @@ export const SecurityGroup: React.FunctionComponent<{}> = (props) => {
     const [isPanelOpen, { setTrue: openPanel, setFalse: dismissPanel }] = useBoolean(false);
     const [panelMode, setPanelMode] = useState<'edit' | 'create' | 'view'>("edit");
 
-    const { getServiceGroupList } = useSecurityGroupService()
+    const { getServiceGroupList, removeServiceGroup } = useSecurityGroupService()
+    const {confirmDelete} = useAlertService();
 
     const getAllSecurityGroup = async () => {
         const securityGroups = await getServiceGroupList();
@@ -37,6 +43,18 @@ export const SecurityGroup: React.FunctionComponent<{}> = (props) => {
         openPanel();
     }
 
+    const removeSecurityGroup = async (item: ISiteGroupInfo) => {
+
+        confirmDelete("Are you sure!") 
+        .then(async response => {
+            if(response.isConfirmed){
+                await removeServiceGroup(item.Id);
+                await getAllSecurityGroup();
+            } 
+        })
+         
+    }
+
     useEffect(() => {
         getAllSecurityGroup();
     }, []);
@@ -51,7 +69,16 @@ export const SecurityGroup: React.FunctionComponent<{}> = (props) => {
             maxWidth: 200,
             isResizable: true,
             onRender: (item: ISiteGroupInfo) => {
-                return <PrimaryButton onClick={async () => await itemClicked(item)}>Manage Group</PrimaryButton>;
+                return (
+                    <>
+                        <Stack horizontal tokens={gapStackTokens}>
+                            <Stack.Item>
+                                <ActionButton iconProps={{ iconName: 'EditContact' }} onClick={async () => await itemClicked(item)} />
+                                <ActionButton iconProps={{ iconName: 'Delete' }} onClick={async () => await removeSecurityGroup(item)} />
+                            </Stack.Item>
+                        </Stack> 
+                    </>
+                );
             },
         },
     ];
@@ -61,7 +88,7 @@ export const SecurityGroup: React.FunctionComponent<{}> = (props) => {
             <h3>Manage Security Group</h3>
             <ActionButton iconProps={{ iconName: 'AddFriend' }} onClick={() => createSecurityGroup()}>
                 Create Security Group
-            </ActionButton> 
+            </ActionButton>
             <hr />
             <div className='pageMainArea'>
                 <DetailsList
@@ -70,7 +97,7 @@ export const SecurityGroup: React.FunctionComponent<{}> = (props) => {
                     columns={_columns}
                     setKey="set"
                     layoutMode={DetailsListLayoutMode.justified}
-                    onItemInvoked={itemClicked} 
+                    onItemInvoked={itemClicked}
                 />
             </div>
 
@@ -84,7 +111,7 @@ export const SecurityGroup: React.FunctionComponent<{}> = (props) => {
                 <ManageSecurityGroup
                     securityGroup={selectedSecurityGroup}
                     panelMode={panelMode}
-                    dismissPanel = {dismissPanel}>
+                    dismissPanel={dismissPanel}>
 
                 </ManageSecurityGroup>
             </Panel>

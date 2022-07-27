@@ -8,8 +8,10 @@ import { PrincipalType } from '@pnp/spfx-controls-react/lib/PeoplePicker';
 import { useBoolean } from "@fluentui/react-hooks";
 import { renderFieldDescription, renderFieldErrorMessage, renderFieldLabelWithHelp } from "../components";
 import { Counter } from "./Counter";
-
-
+import { useState } from "react";
+import { RichTextEditor } from "../components/editor/editor";
+import { useEmailService } from "../service/useEmailService";
+ 
 const gapStackTokens: IStackTokens = {
     childrenGap: 5,
     padding: 5,
@@ -57,9 +59,11 @@ export const FormExample: React.FunctionComponent<{}> = (props) => {
 
     const [selectedUsers, setSelectedUsers] = React.useState<IPersonaProps[]>([]);
     const [isViewMode, { toggle: toggleEditMode }] = useBoolean(false);
-    const [showFormikData, { toggle: toggleFormikData }] = useBoolean(false);
+    const [showFormikData, { toggle: toggleFormikData }] = useBoolean(false); 
 
     const appContext = AppContext.getInstance();
+
+    const { sendTestEmail } = useEmailService();
 
     const formik = useFormik({
         initialValues: {
@@ -79,6 +83,7 @@ export const FormExample: React.FunctionComponent<{}> = (props) => {
                     organization: "",
                 }
             ],
+            description : '',
             acceptTerms: false
         },
         validationSchema: formValidationSchema,
@@ -89,7 +94,7 @@ export const FormExample: React.FunctionComponent<{}> = (props) => {
         onReset: () => {
             setSelectedUsers([]);
         }
-    });
+    }); 
 
     const fieldHasError = (filedName: string): boolean => {
         return (formik.touched[filedName] && (formik.errors[filedName]));
@@ -242,7 +247,7 @@ export const FormExample: React.FunctionComponent<{}> = (props) => {
     }
 
     return (
-        <>
+        <div style={{paddingLeft : 15, paddingRight: 15}}>
             <h1>Advance Form Example With Validation</h1> <hr />
             <div className="container">
                 <form onSubmit={formik.handleSubmit}>
@@ -431,7 +436,7 @@ export const FormExample: React.FunctionComponent<{}> = (props) => {
                                 value={formik.values.domainName}
                                 multiline autoAdjustHeight
                             />
-                            {fieldHasError("acceptTerms") ? renderFieldErrorMessage(formik.errors["domainName"]) : ''}
+                            {fieldHasError("domainName") ? renderFieldErrorMessage(formik.errors["domainName"]) : ''}
                         </Stack.Item>
                         <Stack.Item className={classNames.inputItem50}>
                             <TextField
@@ -442,7 +447,7 @@ export const FormExample: React.FunctionComponent<{}> = (props) => {
                                 value={formik.values.domainName}
                                 multiline autoAdjustHeight
                             />
-                            {fieldHasError("acceptTerms") ? renderFieldErrorMessage(formik.errors["domainName"]) : ''}
+                            {fieldHasError("domainName") ? renderFieldErrorMessage(formik.errors["domainName"]) : ''}
                         </Stack.Item>
                     </Stack>
                     <Stack horizontal tokens={gapStackTokens}>
@@ -450,11 +455,11 @@ export const FormExample: React.FunctionComponent<{}> = (props) => {
                             <Dropdown
                                 placeholder="Select an option"
                                 label="Basic uncontrolled example"
-                                options={options}
-                                //name="domainName" 
-
+                                options={options}  
                                 required={fieldHasError("domainName")}
-                                onChange={formik.handleChange}
+                                onChange={(e, item, index) => {
+                                    formik.setFieldValue('domainName', item.text, true);
+                                }}
                                 defaultSelectedKey={formik.values.domainName}
                                 disabled={isViewMode}
                             />
@@ -463,12 +468,37 @@ export const FormExample: React.FunctionComponent<{}> = (props) => {
                             <Dropdown
                                 placeholder="Select options"
                                 label="Multi-select uncontrolled example"
-                                defaultSelectedKeys={['apple', 'banana', 'grape']}
+                                //defaultSelectedKeys={['apple', 'banana', 'grape']}
                                 multiSelect
                                 options={options}
                                 disabled={isViewMode}
+                                onChange={(e, item, index) => { 
+                                    const keys = formik.values['address'];  
+                                    formik.setFieldValue('address', [keys, item.key].join(", "), true);
+                                }}
                             />
                         </Stack.Item>
+                    </Stack>
+                    <Stack horizontal tokens={gapStackTokens}>
+                        <Stack.Item className={classNames.inputItem75}>
+                        <RichTextEditor 
+                                label="Example for Rich Text Editor"
+                                placeholder="This is placehoder, we can type anything here."
+                                required={fieldHasError("description")}
+                                value={formik?.values?.description }
+                                onChange={(value) => {   
+                                    formik.setFieldValue('description', value, true);  
+                                }}
+                                onBlur={() => {
+                                    formik.setFieldTouched('description', true)
+                                }}   
+                                errorMessage={fieldHasError('description') ? formik.errors["description"] : ''}
+                                description="This is the description of the rich text editor" 
+                                readOnly={isViewMode}
+                                showHelp={true}
+                                helpDescription={helpDetails}
+                            />
+                        </Stack.Item> 
                     </Stack>
                     <Stack horizontal tokens={gapStackTokens}>
                         <Stack.Item className={classNames.inputItem75}>
@@ -548,6 +578,6 @@ export const FormExample: React.FunctionComponent<{}> = (props) => {
                     </Stack>
                 </form>
             </div>
-        </>
+        </div>
     );
 }

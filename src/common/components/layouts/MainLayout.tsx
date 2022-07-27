@@ -25,6 +25,12 @@ export const MainLayout : React.FunctionComponent = () => {
               onClick: () => navigate('/form-example', { replace: true }),
             },
             { 
+              key: 'emailExample', 
+              text: 'Email Example', 
+              iconProps: { iconName: 'Mail' }, 
+              onClick: () => navigate('/email-example', { replace: true }),
+            },
+            { 
               key: 'alert', 
               text: 'Alert Example', 
               iconProps: { iconName: 'MailAlert' }, 

@@ -12,6 +12,7 @@ import { initializeIcons } from "@fluentui/react";
 import { mergeStyleSets, setIconOptions } from '@fluentui/react/lib/Styling';
 import { getSP } from "./config/pnpjs.config"; 
 import { AlertExample } from "./examples/AlertExample";
+import { EmailExample } from "./examples/EmailExample";
 
 const ApplicationMain: React.FunctionComponent<{}> = (props) => {
 
@@ -64,6 +65,7 @@ const ApplicationMain: React.FunctionComponent<{}> = (props) => {
             {/* we want to protect these routes */}
             <Route element={<RequireAuth allowedRoles={[ROLES.User]} />}>
               <Route path='/form-example' element={<FormExample />} />
+              <Route path='/email-example' element={<EmailExample />} />
               <Route path='/counter' element={<Counter />} />
               <Route path='/loading' element={<LoadingExample />} />
               <Route path='/alert' element={<AlertExample />} />
@@ -74,7 +76,7 @@ const ApplicationMain: React.FunctionComponent<{}> = (props) => {
             <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
               <Route path='/admin/*' element={<Admin />} />
             </Route>
-          </Route>
+          </Route> 
 
           {/* catch all */}
           <Route path='/unauthorized' element={<AccessDenied />} />
