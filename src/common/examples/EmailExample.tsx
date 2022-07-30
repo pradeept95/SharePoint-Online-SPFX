@@ -139,7 +139,7 @@ export const EmailExample: React.FunctionComponent<{}> = (props) => {
                         <Stack.Item className={classNames.inputItem75}>
                             <PeoplePicker
                                 peoplePickerType="Compact"
-                                label="CC"
+                                label="CC:"
                                 placeholder="Type name or email to search..."
                                 required={fieldHasError("cc")}
                                 defaultSelectedUsers={ccUsers}
@@ -165,7 +165,7 @@ export const EmailExample: React.FunctionComponent<{}> = (props) => {
                         <Stack.Item className={classNames.inputItem75}>
                             <PeoplePicker
                                 peoplePickerType="Compact"
-                                label="BCC"
+                                label="BCC:"
                                 placeholder="Type name or email to search..."
                                 required={fieldHasError("bcc")}
                                 defaultSelectedUsers={bccUsers}
@@ -191,7 +191,7 @@ export const EmailExample: React.FunctionComponent<{}> = (props) => {
                     <Stack horizontal tokens={gapStackTokens}>
                         <Stack.Item className={classNames.inputItem75}>
                             <TextField
-                                label="Subject"
+                                label="Subject:"
                                 name="subject"
                                 placeholder="Enter your email subject..."
                                 required={fieldHasError("subject")}
@@ -205,7 +205,7 @@ export const EmailExample: React.FunctionComponent<{}> = (props) => {
                     <Stack horizontal tokens={gapStackTokens}>
                         <Stack.Item className={classNames.inputItem75}>
                             <RichTextEditor
-                                label="Email Body"
+                                label="Email Body:"
                                 placeholder="Compose your Email Message...."
                                 required={fieldHasError("description")}
                                 value={formik?.values?.body}
